@@ -1,0 +1,90 @@
+/* div.input-block label {
+  display: block;
+  font-weight: bold;
+  color: #acacac;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+div.input-block input {
+  width: 100%;
+  height: 32px;
+  font-size: 14px;
+  color: #666;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+div.input-block + .input-block {
+  margin-top: 10px;
+}
+
+div.input-block label span {
+  color: #ff3366;
+  text-transform: lowercase;
+  font-size: 12px;
+  margin-left: 20px;
+} */
+
+div.main-input-container {
+  width: 100%;
+  position: relative;
+  height: 50px;
+  overflow: hidden;
+  margin: 10px 0px;
+}
+
+div.input-block input {
+  width: 100%;
+  height: 100%;
+  color: #666;
+  padding-top: 30px;
+  border: none;
+  outline: none;
+}
+
+div.input-block label {
+  position: absolute;
+  text-transform: uppercase;
+  color: #acacac;
+  font-size: 14px;
+  bottom: 0px;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-bottom: 1px solid #ddd;
+}
+
+div.input-block label::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  bottom: -1px;
+  height: 100%;
+  width: 100%;
+  border-bottom: 2px solid #ccc;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.content-name {
+  position: absolute;
+  bottom: 5px;
+  left: 0px;
+  transition: all 0.3s ease;
+}
+
+div.main-input-container input:focus + .label-name .content-name,
+div.main-input-container input:valid + .label-name .content-name {
+  transform: translateY(-150%);
+  font-size: 14px;
+  color: #666;
+  font-weight: bold;
+}
+
+div.main-input-container input:focus + .label-name::after,
+div.main-input-container input:valid + .label-name::after {
+  transform: translate(0%);
+}
