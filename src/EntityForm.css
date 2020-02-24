@@ -1,28 +1,36 @@
 body {
-  background-image: url("./resources/background-image.jpg");
+  background-image: url("./img/background-image.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
 }
 
 aside {
-  width: 320px;
   background-color: #fff;
   border-radius: 4px;
-  width: 320px;
+  width: 400px;
   padding: 30px 20px;
   box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12);
+  border: 3px solid #333;
 }
 
-div.form-block p.title {
-  font-weight: bold;
+div.header-block {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #333;
+  width: 100%;
+}
+
+div.header-block p.title {
   font-size: 20px;
   text-align: center;
   color: #333;
-  margin-bottom: 30px;
+  font-weight: bold;
 }
 
-div.form-block button {
+div.form-block button.submit-btn {
   border: none;
   display: block;
   text-align: center;
@@ -37,16 +45,16 @@ div.form-block button {
   font-size: 16px;
   background-color: #333;
   padding: 17px 60px;
-  margin: 0 auto;
+  margin: 15px auto auto auto;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-div.form-block button span {
+div.form-block button.submit-btn span {
   position: relative;
   z-index: 1;
 }
 
-div.form-block button:after {
+div.form-block button.submit-btn:after {
   content: "";
   position: absolute;
   left: 0;
@@ -60,7 +68,101 @@ div.form-block button:after {
   transform: translateX(-98%) translateY(-25%) rotate(45deg);
 }
 
-div.form-block button:hover:after {
+div.form-block button.submit-btn:hover:after {
   -webkit-transform: translateX(-9%) translateY(-25%) rotate(45deg);
   transform: translateX(-9%) translateY(-25%) rotate(45deg);
+}
+
+div.form-block button:active {
+  color: #333;
+}
+
+div.attributes-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+div.attributes-container {
+  font-weight: bold;
+  color: #333;
+}
+
+div.attributes-container button.plus-btn {
+  margin: 0px 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  background-color: #256eff;
+  font-weight: bold;
+  border-style: none;
+  border-radius: 2px;
+  color: #333;
+  box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+div.attributes-container button.plus-btn:hover {
+  background-color: rgb(30, 82, 187);
+}
+
+div.attributes-container button.plus-btn:active {
+  background-color: #0e2f72;
+}
+
+div.attributes-container .trash {
+  background-color: #ff3366;
+  border: 0;
+  border-radius: 2px;
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+  box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+div.attributes-container .trash:hover {
+  background-color: #b11c41;
+}
+
+div.attributes-container .trash:active {
+  background-color: #721d33;
+}
+
+div.select-box {
+  margin: 10px 0px 0px 0px;
+  text-align: center;
+}
+
+div.attributes-block {
+  display: flex;
+  align-items: center;
+}
+
+div.attributes-block .select-box {
+  display: flex;
+  align-items: center;
+  margin: 0px 0px;
+}
+
+div.select-box label {
+  display: flex;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  justify-content: flex-start;
+  align-self: flex-start;
+}
+
+div.attributes-block {
+  display: flex;
+}
+
+div.attributes-block .select-box {
+  display: flex;
+  flex-direction: column;
+  margin: 0px 0px 0px 10px;
 }

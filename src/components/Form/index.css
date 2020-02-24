@@ -1,32 +1,3 @@
-/* div.input-block label {
-  display: block;
-  font-weight: bold;
-  color: #acacac;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
-div.input-block input {
-  width: 100%;
-  height: 32px;
-  font-size: 14px;
-  color: #666;
-  border: 0;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 10px;
-}
-
-div.input-block + .input-block {
-  margin-top: 10px;
-}
-
-div.input-block label span {
-  color: #ff3366;
-  text-transform: lowercase;
-  font-size: 12px;
-  margin-left: 20px;
-} */
-
 div.main-input-container {
   width: 100%;
   position: relative;
@@ -38,7 +9,7 @@ div.main-input-container {
 div.input-block input {
   width: 100%;
   height: 100%;
-  color: #666;
+  color: #444;
   padding-top: 30px;
   border: none;
   outline: none;
@@ -46,15 +17,14 @@ div.input-block input {
 
 div.input-block label {
   position: absolute;
-  text-transform: uppercase;
-  color: #acacac;
+  color: #222;
   font-size: 14px;
   bottom: 0px;
   left: 0%;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #666;
 }
 
 div.input-block label::after {
@@ -64,7 +34,7 @@ div.input-block label::after {
   bottom: -1px;
   height: 100%;
   width: 100%;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #444;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
 }
@@ -80,7 +50,7 @@ div.main-input-container input:focus + .label-name .content-name,
 div.main-input-container input:valid + .label-name .content-name {
   transform: translateY(-150%);
   font-size: 14px;
-  color: #666;
+  color: #333;
   font-weight: bold;
 }
 
