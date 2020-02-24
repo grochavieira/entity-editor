@@ -1,11 +1,3 @@
-body {
-  background-image: url("./img/background-image.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
 aside {
   background-color: #fff;
   border-radius: 4px;
@@ -82,11 +74,9 @@ div.attributes-container {
   align-items: center;
   justify-content: center;
   text-align: center;
-}
-
-div.attributes-container {
   font-weight: bold;
   color: #333;
+  position: relative;
 }
 
 div.attributes-container button.plus-btn {
@@ -112,6 +102,44 @@ div.attributes-container button.plus-btn:active {
   background-color: #0e2f72;
 }
 
+div.attributes-container button span.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: #333;
+  font-size: 12px;
+  font-weight: 100;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -5px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+div.attributes-container button.plus-btn span.tooltip {
+  margin-left: -40px;
+}
+
+div.attributes-container button span.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+div.attributes-container button:hover span.tooltip {
+  visibility: visible;
+  opacity: 1;
+}
 div.attributes-container .trash {
   background-color: #ff3366;
   border: 0;

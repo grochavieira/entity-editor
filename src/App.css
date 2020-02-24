@@ -10,3 +10,11 @@ div.App {
 div.App main {
   margin-left: 30px;
 }
+
+body {
+  background-image: url("./img/background-image.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}

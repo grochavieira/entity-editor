@@ -3,8 +3,8 @@ import { Form } from "@unform/web";
 import { Scope } from "@unform/core";
 import ReactSelect from "react-select";
 
-import "./App.css";
 import "./global.css";
+import "./App.css";
 import "./EntityForm.css";
 
 // import * as Yup from "yup";
@@ -164,13 +164,14 @@ function App() {
                   onClick={addNewAttribute}
                   className="plus-btn"
                 >
-                  +
+                  <span className="tooltip">Add a new attribute</span>+
                 </button>
                 <button
                   type="button"
                   onClick={deleteAttribute}
                   className="trash"
                 >
+                  <span className="tooltip">Delete the last attribute</span>
                   <FontAwesomeIcon icon={faTrash} color="#333" />
                 </button>
               </div>
