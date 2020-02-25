@@ -58,3 +58,8 @@ div.main-input-container input:focus + .label-name::after,
 div.main-input-container input:valid + .label-name::after {
   transform: translate(0%);
 }
+
+.content-error {
+  color: #ff3366;
+  font-size: 12px;
+}

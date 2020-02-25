@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useField } from "@unform/core";
 
-import "./index.css";
-import "../../../src/global.css";
+import "./Input.css";
 
 export default function Input({ name, field, ...refs }) {
   const inputRef = useRef(null);
@@ -22,7 +21,7 @@ export default function Input({ name, field, ...refs }) {
         <input ref={inputRef} {...refs} />
         <label className="label-name" htmlFor={field}>
           <span className="content-name">
-            {field} {error}
+            {field} <span className="content-error">{error}</span>
           </span>
         </label>
       </div>
