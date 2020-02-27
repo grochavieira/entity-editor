@@ -1,0 +1,15 @@
+span.entity-header {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.card {
+  border: 2px dashed #333;
+  margin: 5px;
+  border-radius: 2px;
+  background-color: rgba(33, 33, 33, 0.2);
+  min-height: 50px;
+}

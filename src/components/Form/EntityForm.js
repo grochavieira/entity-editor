@@ -24,8 +24,8 @@ export default function EntityForm() {
 
   // initial value for the type Select
   const [selectedType, setSelectedType] = useState({
-    value: "Number",
-    label: "Number"
+    value: "Prototype",
+    label: "Prototype"
   });
 
   // object types to be selected in the Select
@@ -51,26 +51,18 @@ export default function EntityForm() {
   // types that can be selected for each entity attribute
   const validTypes = [
     {
-      value: "Number",
-      label: "Number"
-    },
-    {
-      value: "Float",
-      label: "Float"
-    },
-    {
-      value: "Double",
-      label: "Double"
+      value: "Prototype",
+      label: "Prototype"
     }
   ];
 
   // when a object type is selected, the form will change dinamically
   // with the folowwing attributes
   const formFields = {
-    devices: ["device_id", "entity_name", "entity_type"],
-    farmer: ["id", "name"],
-    farm: ["id", "name"],
-    management_zone: ["id", "name"]
+    devices: ["entity_name", "entity_type"],
+    farmer: ["entity_name", "entity_type"],
+    farm: ["entity_name", "entity_type"],
+    management_zone: ["entity_name", "entity_type"]
   };
 
   // create the entity and convert it to JSON file
@@ -185,7 +177,7 @@ export default function EntityForm() {
               <div className="input-block">
                 <Input
                   name={`attributes[${attributeId}].name`}
-                  field="name"
+                  field="value"
                   required
                 />
               </div>

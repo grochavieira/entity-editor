@@ -57,7 +57,7 @@ const Select = ({ name, ...rest }) => {
 
   return (
     <ReactSelect
-      defaultValue={{ value: "Number", label: "Number" }}
+      defaultValue={{ value: "Prototype", label: "Prototype" }}
       ref={selectRef}
       {...rest}
       styles={customSelectTypeStyles}

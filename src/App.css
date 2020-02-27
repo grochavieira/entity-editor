@@ -1,7 +1,7 @@
 div.App {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 60px 30px;
+  padding: 80px 30px;
 
   display: flex;
   flex-direction: row;

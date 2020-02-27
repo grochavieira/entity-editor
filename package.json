@@ -9,10 +9,16 @@
     "@unform/core": "^2.0.0",
     "@unform/web": "^2.0.0",
     "font-awesome": "^4.7.0",
+    "immer": "^5.3.6",
+    "konva": "^4.1.6",
     "react": "^16.12.0",
+    "react-dnd": "^10.0.2",
+    "react-dnd-html5-backend": "^10.0.2",
     "react-dom": "^16.12.0",
+    "react-konva": "^16.12.0-0",
     "react-scripts": "3.4.0",
-    "react-select": "^3.0.8"
+    "react-select": "^3.0.8",
+    "styled-components": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
