@@ -1,2 +1,3 @@
 # Entity2JSON
-Projeto de Engenharia de Software - Site para criar entidades virtuais e converte-las em um arquivo JSON e manda-lo para o ORION.
+
+Software Engineering project - site to convert entities to JSON files, and send them throught http request to ORION.
