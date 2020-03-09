@@ -1,10 +1,11 @@
 aside {
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 4px;
+  border-radius: 2px;
   height: 80%;
   padding: 20px 20px;
   box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12);
   border-top: 20px solid #333;
+  min-width: 400px;
 }
 
 div.header-block {
@@ -27,91 +28,8 @@ div.attributes-header-block {
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-weight: bold;
   color: #333;
   position: relative;
-}
-
-div.attributes-header-block button.plus-btn {
-  margin: 0px 5px;
-  width: 30px;
-  height: 30px;
-  font-size: 16px;
-  background-color: #256eff;
-  font-weight: bold;
-  border-style: none;
-  border-radius: 2px;
-  color: #333;
-  box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-div.attributes-header-block button.plus-btn:hover {
-  background-color: rgb(30, 82, 187);
-}
-
-div.attributes-header-block button.plus-btn:active {
-  background-color: #0e2f72;
-}
-
-div.attributes-header-block .trash-btn {
-  background-color: #ff3366;
-  border: 0;
-  border-radius: 2px;
-  width: 30px;
-  height: 30px;
-  font-size: 12px;
-  box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: 0.5s;
-}
-
-div.attributes-header-block .trash-btn:hover {
-  background-color: #b11c41;
-}
-
-div.attributes-header-block .trash-btn:active {
-  background-color: #721d33;
-}
-
-div.attributes-header-block button span.tooltip {
-  visibility: hidden;
-  width: 120px;
-  background-color: #333;
-  font-size: 12px;
-  font-weight: 100;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -5px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-div.attributes-header-block button.plus-btn span.tooltip {
-  margin-left: -40px;
-}
-
-div.attributes-header-block button span.tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-div.attributes-header-block button:hover span.tooltip {
-  visibility: visible;
-  opacity: 1;
 }
 
 div.attributes-block {
@@ -165,13 +83,13 @@ div.select-box label {
   letter-spacing: 1px;
 }
 
-#submit-btn {
+.style-btn {
   position: relative;
   overflow: hidden;
   cursor: pointer;
 }
 
-#submit-btn span {
+.style-btn span {
   position: relative;
   transition: all 0.45s ease-Out;
 }
@@ -187,11 +105,52 @@ div.select-box label {
   transition: all 0.3s ease-Out;
 }
 
-#submit-btn:hover .translate {
+.style-btn:hover .translate {
   left: 0;
 }
 
 .button:active {
   border-color: #fff;
   background: #333;
+}
+
+div.attributes-header-block .button {
+  margin-left: 10px;
+  width: 100%;
+  height: 30px;
+}
+
+div.attributes-header-block .translate {
+  background: #3366ff;
+  transform: rotate(20deg);
+  top: -10px;
+  left: -300px;
+  width: 140%;
+}
+
+div.attributes-block .button {
+  margin: 10px 0px 0px 5px;
+  width: 40px;
+  height: 40px;
+}
+
+div.attributes-block .translate {
+  background: #ff3366;
+  transform: rotate(45deg);
+  top: -27px;
+}
+
+div span.attribute-title {
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+div.attributes-container {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 2px;
+  margin: 5px 0px;
 }

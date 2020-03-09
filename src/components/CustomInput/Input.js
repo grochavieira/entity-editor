@@ -8,11 +8,13 @@ export default function Input({ name, field, ...refs }) {
   const { fieldName, registerField, error } = useField(name);
 
   useEffect(() => {
-    registerField({
-      name: fieldName,
-      ref: inputRef.current,
-      path: "value"
-    });
+    if (name !== "attributes") {
+      registerField({
+        name: fieldName,
+        ref: inputRef.current,
+        path: "value"
+      });
+    }
   }, [fieldName, registerField]);
 
   return (

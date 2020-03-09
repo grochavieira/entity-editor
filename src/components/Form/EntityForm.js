@@ -14,9 +14,11 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 export default function EntityForm() {
   // const formRef = useRef(null);
 
+  const [type, setType] = useState("");
+  const [newAttribute, setNewAttribute] = useState("");
   const [entity, setEntity] = useState({});
   const [numOfAttributes, setNumOfAttributes] = useState(0);
-  const [attributesId, setAttributesId] = useState([0]);
+  const [attributes, setAttributes] = useState([]);
   const [selectedObject, setSelectedObject] = useState({
     value: "devices",
     label: "devices"
@@ -51,40 +53,66 @@ export default function EntityForm() {
   // types that can be selected for each entity attribute
   const validTypes = [
     {
-      value: "Prototype",
-      label: "Prototype"
+      value: "Number",
+      label: "Number"
+    },
+    {
+      value: "Text",
+      label: "Text"
     }
   ];
 
-  // when a object type is selected, the form will change dinamically
-  // with the folowwing attributes
-  const formFields = {
-    devices: ["entity_name", "entity_type"],
-    farmer: ["entity_name", "entity_type"],
-    farm: ["entity_name", "entity_type"],
-    management_zone: ["entity_name", "entity_type"]
-  };
+  const management_zone = [
+    {
+      value: "urn:ngsi-ld:ManagementZone:001",
+      label: "urn:ngsi-ld:ManagementZone:001"
+    },
+    {
+      value: "urn:ngsi-ld:ManagementZone:002",
+      label: "urn:ngsi-ld:ManagementZone:002"
+    },
+    {
+      value: "urn:ngsi-ld:ManagementZone:003",
+      label: "urn:ngsi-ld:ManagementZone:003"
+    }
+  ];
 
   // create the entity and convert it to JSON file
   async function handleSubmit(data, { reset }) {
     console.log(JSON.stringify(data));
+    console.log(data);
     setEntity(data);
+    let vetor = [];
+    for (let i = 0; i <= 20; i++) {
+      vetor[i] = data;
+    }
+
+    for (let i = 1; i <= 20; i++) {
+      vetor[i].id = `urn:ngsi-ld:${vetor[i].type}:${vetor[i].type}${i}`;
+      console.log(vetor[i]);
+    }
   }
 
   const addNewAttribute = () => {
-    let sumOfAttributes = numOfAttributes + 1;
-    setNumOfAttributes(sumOfAttributes);
-    setAttributesId([...attributesId, sumOfAttributes]);
+    if (newAttribute !== "") {
+      let sumOfAttributes = numOfAttributes + 1;
+      setNumOfAttributes(sumOfAttributes);
+      let object = {
+        id: sumOfAttributes,
+        name: newAttribute
+      };
+      setAttributes([...attributes, object]);
+    } else {
+      alert("Please, type the attribute name to create a new attribute!");
+    }
+    setNewAttribute("");
+    console.table(attributes);
   };
 
-  const deleteAttribute = () => {
-    if (attributesId.length >= 1) {
-      const newAttributes = attributesId.filter(
-        attributeId => attributeId !== attributesId.length - 1
-      );
-      setAttributesId(newAttributes);
-      let descreasedAttributes = numOfAttributes - 1;
-      setNumOfAttributes(descreasedAttributes);
+  const deleteAttribute = id => {
+    if (attributes.length >= 1) {
+      const newAttributes = attributes.filter(attribute => attribute.id !== id);
+      setAttributes(newAttributes);
     }
   };
 
@@ -146,62 +174,106 @@ export default function EntityForm() {
       </div>
 
       <Form onSubmit={handleSubmit}>
-        <Scope path={selectedObject.value}>
-          {formFields[selectedObject.value].map(field => (
-            <Input key={field} field={field} name={field} required />
-          ))}
+        <Input
+          name="id"
+          value={`urn:ngsi-ld:${type}:${type}001`}
+          field="id"
+          onChange={() => {}}
+          required
+        />
 
-          <div className="attributes-header-block">
-            <p>Attributes</p>
+        <Input
+          value={type}
+          onChange={e => setType(e.target.value)}
+          field="type"
+          name="type"
+          required
+        />
 
-            <button
-              type="button"
-              onClick={addNewAttribute}
-              className="plus-btn"
-            >
-              <span className="tooltip">Add a new attribute</span>+
-            </button>
+        <div className="attributes-header-block">
+          <Input
+            name="attributes"
+            field="new attribute"
+            type="text"
+            value={newAttribute}
+            onChange={e => setNewAttribute(e.target.value)}
+          />
 
-            <button
-              type="button"
-              onClick={deleteAttribute}
-              className="trash-btn"
-            >
-              <span className="tooltip">Delete the last attribute</span>
-              <FontAwesomeIcon icon={faTrash} color="#333" />
-            </button>
-          </div>
+          <button
+            className="button style-btn"
+            onClick={addNewAttribute}
+            type="button"
+          >
+            <div className="translate"></div>
+            <span> Add New Attribute</span>
+          </button>
+        </div>
 
-          {attributesId.map(attributeId => (
-            <div key={attributeId} className="attributes-block">
-              <div className="input-block">
-                <Input
-                  name={`attributes[${attributeId}].name`}
-                  field="value"
-                  required
-                />
-              </div>
-              <div className="select-box">
-                <label htmlFor="type">type: </label>
-                <Select
-                  className="select"
-                  name={`attributes[${attributeId}].type`}
-                  options={validTypes}
-                  onChange={handleTypeChange}
-                  theme={theme => ({
-                    ...theme,
-                    colors: {
-                      ...theme.colors,
-                      primary25: "#15b097",
-                      primary: "#333"
-                    }
-                  })}
-                />
+        {attributes.map(attribute => (
+          <Scope key={attribute.id} path={attribute.name}>
+            <div className="attributes-container">
+              <span className="attribute-title">{attribute.name}</span>
+
+              <div className="attributes-block">
+                <div className="input-block">
+                  <Input name={`name`} field="value" required />
+                </div>
+                <div className="select-box">
+                  <label htmlFor="type">type: </label>
+                  <Select
+                    className="select"
+                    name={`type`}
+                    width={130}
+                    defaultValue={{ value: "Text", label: "Text" }}
+                    options={validTypes}
+                    onChange={handleTypeChange}
+                    theme={theme => ({
+                      ...theme,
+                      colors: {
+                        ...theme.colors,
+                        primary25: "#15b097",
+                        primary: "#333"
+                      }
+                    })}
+                  />
+                </div>
+
+                <button
+                  className="button style-btn"
+                  onClick={() => deleteAttribute(attribute.id)}
+                  type="button"
+                >
+                  <div className="translate"></div>
+                  <span>
+                    <FontAwesomeIcon icon={faTrash} color="#333" />
+                  </span>
+                </button>
               </div>
             </div>
-          ))}
-        </Scope>
-        <button className="button" id="submit-btn" type="submit">
+          </Scope>
+        ))}
+
+        {/* <div className="relationship-block">
+          <span>Do you want to create a relationship?</span>
+          <div className="select-box">
+            <label htmlFor="type">type: </label>
+            <Select
+              className="select"
+              name={`type`}
+              options={management_zone}
+              onChange={handleTypeChange}
+              theme={theme => ({
+                ...theme,
+                colors: {
+                  ...theme.colors,
+                  primary25: "#15b097",
+                  primary: "#333"
+                }
+              })}
+            />
+          </div>
+        </div> */}
+        <button className="button style-btn" type="submit">
           <div className="translate"></div>
           <span> Create Entity </span>
         </button>

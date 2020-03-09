@@ -2,9 +2,9 @@ import React, { useRef, useEffect } from "react";
 import ReactSelect from "react-select";
 import { useField } from "@unform/core";
 
-const Select = ({ name, ...rest }) => {
+const Select = ({ name, width, defaultValue, ...rest }) => {
   const selectRef = useRef(null);
-  const { fieldName, defaultValue, registerField, error } = useField(name);
+  const { fieldName, registerField } = useField(name);
 
   const customSelectTypeStyles = {
     control: base => ({
@@ -12,7 +12,7 @@ const Select = ({ name, ...rest }) => {
       height: 25,
       fontSize: 14,
       minHeight: 35,
-      width: 185,
+      width: width,
       borderRadius: 2
     }),
     menu: base => ({
@@ -57,7 +57,7 @@ const Select = ({ name, ...rest }) => {
 
   return (
     <ReactSelect
-      defaultValue={{ value: "Prototype", label: "Prototype" }}
+      defaultValue={defaultValue}
       ref={selectRef}
       {...rest}
       styles={customSelectTypeStyles}
