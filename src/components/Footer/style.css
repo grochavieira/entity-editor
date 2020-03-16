@@ -1,0 +1,15 @@
+.footer-container {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 15px;
+  margin: 0px auto;
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.footer-container p {
+  color: #333;
+  letter-spacing: 0.1em;
+  font-size: 1.1em;
+}

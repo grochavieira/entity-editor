@@ -3,14 +3,15 @@ import React from "react";
 import "./global.css";
 import "./App.css";
 
-import EntityForm from "./components/Form/EntityForm";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Routes from "./routes";
 
 function App() {
   return (
     <div className="App">
-      <aside>
-        <EntityForm />
-      </aside>
+      <Routes />
+      <Footer />
     </div>
   );
 }
