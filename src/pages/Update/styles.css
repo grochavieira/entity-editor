@@ -1,0 +1,36 @@
+.update-container {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 2px;
+  height: 100%;
+  padding: 20px 20px;
+  box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12);
+  border-top: 20px solid #333;
+  min-width: 280px;
+  max-width: 420px;
+  width: 96%;
+  margin: 10px auto;
+  color: #333;
+}
+
+.update-container .header-title-block {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 1.7rem;
+  text-align: center;
+}
+
+.update-container .property-block {
+  font-size: 1.4rem;
+  margin: 5px 0px;
+  background-color: #ddd;
+  padding: 15px 10px;
+  letter-spacing: 0.1em;
+}
+
+.update-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

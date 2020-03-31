@@ -5,19 +5,20 @@ main {
   padding: 20px 20px;
   box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12);
   border-top: 20px solid #333;
-  min-width: 400px;
+  min-width: 280px;
+  max-width: 420px;
+  width: 96%;
   margin: 10px auto;
 }
 
 .header-block {
   display: flex;
   justify-content: center;
-  margin-bottom: 5px;
   width: 100%;
 }
 
 .header-block p.title {
-  font-size: 17px;
+  font-size: 1.7rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-align: center;
@@ -49,6 +50,7 @@ main {
 .select-box {
   margin: 10px 0px 0px 0px;
   text-align: center;
+  font-size: 1.5rem;
 }
 
 .select-box label {
@@ -60,85 +62,14 @@ main {
   align-self: flex-start;
 }
 
-.button {
-  display: flex;
-  height: 50px;
-  width: 200px;
-  margin: 20px auto 0px auto;
-  background-color: #ccc;
-  border: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  text-decoration: none;
-  font-size: 0.8em;
-  letter-spacing: 1.5px;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  transition: 0.5s;
-}
-
-.button span {
-  color: #333;
-  text-decoration: none;
-  letter-spacing: 1px;
-}
-
-.style-btn {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.style-btn span {
-  position: relative;
-  transition: all 0.45s ease-Out;
-}
-
-.translate {
-  width: 100%;
-  height: 250%;
-  left: -200px;
-  top: -30px;
-  background: #15b097;
-  position: absolute;
-  transition: all 0.3s ease-Out;
-}
-
-.style-btn:hover .translate {
-  left: 0;
-}
-
-.button:active {
-  border-color: solid 2px #fff;
-}
-
-.button:focus {
-  background-color: #888;
-}
-
 .attributes-header-block .button {
   margin-left: 10px;
   width: 100%;
   height: 30px;
 }
 
-.attributes-header-block .translate {
-  background: #3366ff;
-}
-
-.attributes-block .button {
-  margin: 10px 0px 0px 5px;
-  width: 40px;
-  height: 40px;
-}
-
-.attributes-block .translate {
-  background: #ff3366;
-}
-
 div span.attribute-title {
-  letter-spacing: 0.05em;
+  letter-spacing: 0.2em;
   font-size: 14px;
   font-weight: bold;
   color: #333;
@@ -146,7 +77,8 @@ div span.attribute-title {
 }
 
 .attributes-container {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #fff;
+  border: 0.1rem dashed #333;
   padding: 5px;
   border-radius: 2px;
   margin: 5px 0px;
@@ -154,16 +86,19 @@ div span.attribute-title {
 
 .relationship-block {
   display: flex;
+  width: 100%;
   flex-direction: column;
   margin: 10px 5px;
 }
 
-.attributes-block {
+.relationship-block .relationship-box {
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
 }
 
-.relate .button {
-  margin-top: 15px;
+.attributes-block {
+  justify-content: space-between;
 }
 
 .relationship-block span {
@@ -177,8 +112,12 @@ div span.attribute-title {
   border-radius: 2px;
   padding: 10px 5px;
   margin-right: 10px;
-  min-width: 270px;
-  max-width: 270px;
+
+  width: 100%;
+}
+
+.btn-trash.relate {
+  font-size: 20px;
 }
 
 .relationship-value span {
@@ -190,16 +129,73 @@ div span.attribute-title {
   text-transform: uppercase;
 }
 
-@media only screen and (max-width: 650px) {
-  main {
-    background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 2px;
-    padding: 20px 20px;
-    box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12);
-    border-top: 20px solid #333;
-    min-width: 290px;
-    width: 100%;
-    max-width: 400px;
-    margin: 10px auto;
-  }
+.btn-style {
+  text-align: center;
+  margin: 20px 0px 0px 10px;
+  padding: 18px 40px;
+  border: none;
+  font-size: 1.3rem;
+  background-color: #aaa;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #333;
+  font-weight: bold;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 250ms linear 0s;
+}
+
+.btn-style:focus {
+  background-color: #888;
+}
+
+.btn-add {
+  margin: 10px 0px 0px 10px;
+  width: 100%;
+  font-size: 1.3rem;
+  padding: 10px 0px;
+}
+
+.btn-style:hover {
+  background-color: rgba(136, 136, 136, 0.4);
+}
+
+.btn-style:active {
+  background-color: rgba(136, 136, 136, 1);
+}
+
+.btn-trash {
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  font-size: 2.5rem;
+  padding: 5px 7px;
+  color: #333;
+  background-color: #aaa;
+  border-radius: 2px;
+  transition: all 0.3s;
+  margin: 0px auto;
+}
+
+.btn-trash:hover {
+  background-color: rgba(136, 136, 136, 0.4);
+}
+
+.btn-trash:active {
+  background-color: rgba(136, 136, 136, 1);
+}
+
+.btn-trash:focus {
+  background-color: #888;
+}
+
+.submit-block {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-trash.attributes {
+  margin-top: 15px;
+  margin-left: 5px;
+  margin-right: 5px;
 }

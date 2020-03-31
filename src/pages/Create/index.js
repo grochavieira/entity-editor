@@ -2,24 +2,16 @@ import React, { useRef, useState, useEffect } from "react";
 import { Form } from "@unform/web";
 import { Scope } from "@unform/core";
 import ReactSelect from "react-select";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { FiTrash2 } from "react-icons/fi";
 
-import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Header from "../../components/Header";
 import api from "../../services/api";
 
-import "./style.css";
+import "./styles.css";
 
 export default function Create() {
-  const buttonRef = useRef(null);
-  const closeRef = useRef(null);
-  const [dialog, setDialog] = useState({
-    title: "",
-    message: ""
-  });
-
   const [type, setType] = useState("");
   const [newAttribute, setNewAttribute] = useState("");
   const [newRelationship, setNewRelationship] = useState("");
@@ -33,14 +25,14 @@ export default function Create() {
   //   label: "SoilProbe"
   // });
 
+  async function loadEntities() {
+    const { data } = await api.get("/v2/entities?limit=1000");
+
+    setEntities(data);
+    console.log(data);
+  }
+
   useEffect(() => {
-    async function loadEntities() {
-      const { data } = await api.get("/v2/entities?limit=1000");
-
-      setEntities(data);
-      console.log(data);
-    }
-
     loadEntities();
   }, []);
 
@@ -82,6 +74,8 @@ export default function Create() {
 
   // create the entity and convert it to JSON file
   async function handleSubmit(entity, { reset }) {
+    const copyRelationships = relationships;
+    setRelationships([]);
     let error = false;
     const { data } = await api.get(`/v2/entities?type=${type}&limit=100`);
     let newId;
@@ -94,8 +88,11 @@ export default function Create() {
     }
     entity.id = `urn:ngsi-ld:${type}:${newId}`;
 
-    if (relationships.length !== 0) {
+    console.log("ANTES: ", relationships);
+
+    if (copyRelationships.length !== 0) {
       relationships.map(async relationship => {
+        // const copyRelationship = relationship;
         relationship[`ref${type}`] = {
           type: "Relationship",
           value: entity.id
@@ -107,6 +104,8 @@ export default function Create() {
       });
     }
 
+    console.log("DEPOIS: ", relationships);
+
     // send the new entity to ORION
     try {
       await api.post("/v2/entities", entity);
@@ -115,18 +114,12 @@ export default function Create() {
       console.log(e);
     }
     if (error) {
-      setDialog({
-        message: "It was not possible to create a new entity!",
-        title: "ERROR"
-      });
+      alert("It was not possible to create a new entity!");
     } else {
-      setDialog({
-        message: "Entity created successfully!",
-        title: "SUCCESS"
-      });
+      alert("Entity created successfully!");
+      setRelationships([]);
+      loadEntities();
     }
-    buttonRef.current.TriggerEl.click();
-    closeRef.current.focus();
   }
 
   const addNewAttribute = () => {
@@ -139,12 +132,7 @@ export default function Create() {
       };
       setAttributes([...attributes, object]);
     } else {
-      setDialog({
-        message: "Please, type the attribute name to create a new attribute!",
-        title: "ERROR"
-      });
-      buttonRef.current.TriggerEl.click();
-      closeRef.current.focus();
+      alert("Please, type the attribute name to create a new attribute!");
     }
     setNewAttribute("");
     console.table(attributes);
@@ -173,19 +161,11 @@ export default function Create() {
         setRelationships([...relationships, object]);
         setNewRelationship("");
       } else {
-        setDialog({
-          message: "The entity id specified does not exist!",
-          title: "ERROR"
-        });
+        alert("The entity id specified does not exist!");
       }
     } else {
-      setDialog({
-        message: "Please, type a valid entity id to create a relationship!",
-        title: "ERROR"
-      });
+      alert("Please, type a valid entity id to create a relationship!");
     }
-    buttonRef.current.TriggerEl.click();
-    closeRef.current.focus();
   };
 
   const deleteRelationship = id => {
@@ -228,13 +208,7 @@ export default function Create() {
 
   return (
     <>
-      <Header />
-      <Modal
-        closeRef={closeRef}
-        ref={buttonRef}
-        title={dialog.title}
-        message={dialog.message}
-      />
+      <Header create={"current"} />
       <main>
         <div className="form-block">
           <div className="header-block">
@@ -293,12 +267,11 @@ export default function Create() {
               />
 
               <button
-                className="button style-btn"
+                className="btn-style btn-add"
                 onClick={addNewAttribute}
                 type="button"
               >
-                <div className="translate"></div>
-                <span> Add New Attribute</span>
+                Add New Attribute
               </button>
             </div>
 
@@ -333,13 +306,12 @@ export default function Create() {
                     </div>
 
                     <button
-                      className="button style-btn"
+                      className="btn-trash attributes"
                       onClick={() => deleteAttribute(attribute.id)}
                       type="button"
                     >
-                      <div className="translate"></div>
-                      <span className="trash-icon">
-                        <DeleteIcon />
+                      <span>
+                        <FiTrash2 size={20} color="#333" />
                       </span>
                     </button>
                   </div>
@@ -362,12 +334,11 @@ export default function Create() {
               />
 
               <button
-                className="button style-btn"
-                onClick={addNewAttribute}
+                className="btn-style btn-add"
+                onClick={addNewRelationship}
                 type="button"
               >
-                <div className="translate"></div>
-                <span> Add New Relationship</span>
+                Add New Relationship
               </button>
             </div>
 
@@ -380,25 +351,38 @@ export default function Create() {
                     <div className="relationship-block">
                       <span>value: </span>
 
-                      <div className="relationship-value">
-                        <Input
-                          name="type"
-                          value="Relationship"
-                          onChange={() => {}}
-                          invisible={true}
-                        />
-                        <Input
-                          name="value"
-                          value={relationship.id}
-                          onChange={() => {}}
-                          invisible={true}
-                        />
-                        <span>
-                          <b>Id:</b> {relationship.id}
-                        </span>
+                      <div className="relationship-box">
+                        <div className="relationship-value">
+                          <Input
+                            name="type"
+                            value="Relationship"
+                            onChange={() => {}}
+                            invisible={true}
+                          />
+                          <Input
+                            name="value"
+                            value={relationship.id}
+                            onChange={() => {}}
+                            invisible={true}
+                          />
+                          <span>
+                            <b>Id:</b> {relationship.id}
+                          </span>
+                        </div>
+
+                        <button
+                          className="btn-trash relate"
+                          onClick={() => deleteRelationship(relationship.id)}
+                          type="button"
+                        >
+                          <span>
+                            <FiTrash2 size={20} color="#333" />
+                          </span>
+                        </button>
                       </div>
                     </div>
-                    <button
+
+                    {/* <button
                       className="button style-btn relate-btn"
                       onClick={() => deleteRelationship(relationship.id)}
                       type="button"
@@ -407,16 +391,17 @@ export default function Create() {
                       <span className="trash-icon">
                         <DeleteIcon />
                       </span>
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </Scope>
             ))}
 
-            <button className="button style-btn" type="submit">
-              <div className="translate"></div>
-              <span> Create Entity </span>
-            </button>
+            <div className="submit-block">
+              <button className="btn-style btn-submit" type="submit">
+                Create Entity
+              </button>
+            </div>
           </Form>
         </div>
       </main>
