@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 export default function About() {
   return (
     <>
-      <Header />
+      <Header about={"current"} />
       <h1>About</h1>
     </>
   );

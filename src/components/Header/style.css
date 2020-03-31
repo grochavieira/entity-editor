@@ -1,87 +1,50 @@
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 25px 5%;
   background-color: rgba(255, 255, 255, 0.8);
   box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.2);
 }
 
-header span {
-  cursor: pointer;
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 0.1em;
+header .header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
 }
 
-.nav-links {
+header img {
+  margin: 0px 20px 0px 0px;
+  width: 150px;
+  padding: 15px 0px;
+}
+
+header nav ul {
+  display: flex;
+}
+
+header nav ul li {
   list-style: none;
 }
 
-.nav-links li {
-  display: inline-block;
-  padding: 0px 15px;
-  margin: 0px 20px;
+header nav ul li .current {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #333;
+  border-radius: 0;
 }
 
-.nav-links li a {
+header nav li a {
+  text-decoration: none;
+  font-size: 1.3rem;
   transition: all 0.3s ease 0s;
   text-transform: uppercase;
-  text-decoration: none;
+  font-weight: bold;
   color: #333;
-  letter-spacing: 0.1em;
-}
-
-.nav-links a:hover {
-  padding: 10px;
-  background-color: #aaa;
+  letter-spacing: 0.3rem;
+  padding: 24px 20px;
   border-radius: 2px;
-  color: #fff;
-  border-top: 1px solid #999;
-  border-left: 2px solid #999;
-  border-right: 2px solid #999;
-  border-bottom: 3px solid #999;
+  transition: all 250ms linear 0s;
 }
 
-@media only screen and (max-width: 1000px) {
-  .nav-links li {
-    display: inline-block;
-    padding: 0px 15px;
-    margin: 0px 0px;
-  }
-  header {
-    padding: 25px 1%;
-  }
-}
-
-@media only screen and (max-width: 700px) {
-  .nav-links li {
-    display: inline-block;
-    padding: 0px 10px;
-    margin: 0px 0px;
-  }
-  header {
-    padding: 25px 1%;
-  }
-}
-
-@media only screen and (max-width: 650px) {
-  .nav-links li {
-    display: inline-block;
-    padding: 10px 5px;
-    margin: 0px 0px;
-    font-size: 13px;
-  }
-  header {
-    display: flex;
-    flex-direction: column;
-    padding: 20px 2%;
-  }
-  .nav-links a:hover {
-    color: #333;
-    background-color: transparent;
-    padding: 0px;
-    border: none;
-    border-bottom: 2px solid #333;
-  }
+header nav ul li a:hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }
