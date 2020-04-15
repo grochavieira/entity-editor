@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap");
+
 .footer-container {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.8);
@@ -6,9 +8,16 @@
   display: flex;
   justify-content: center;
   margin-top: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .footer-container p {
+  font-family: Kaushan Script;
+  margin-right: 5px;
+  font-weight: bold;
   color: #333;
   letter-spacing: 0.1em;
   font-size: 1.8rem;

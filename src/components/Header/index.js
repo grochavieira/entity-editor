@@ -47,7 +47,7 @@ export default function Header(props) {
               </li>
               <li>
                 <Link className={`${props.list}`} to="/list">
-                  List/Update/Delete
+                  Edit
                 </Link>
               </li>
               <li>

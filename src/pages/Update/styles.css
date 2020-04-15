@@ -1,10 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap");
+
 .update-container {
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 2px;
   height: 100%;
-  padding: 20px 20px;
   box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12);
-  border-top: 20px solid #333;
   min-width: 280px;
   max-width: 420px;
   width: 96%;
@@ -13,11 +13,16 @@
 }
 
 .update-container .header-title-block {
-  font-weight: bold;
-  text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 1.7rem;
+  font-size: 2.3rem;
   text-align: center;
+  background-color: #333;
+  color: #fff;
+  font-family: Kaushan Script;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  text-transform: none;
+  border-radius: 2px;
 }
 
 .update-container .property-block {
@@ -33,4 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.update-form-block {
+  padding: 0px 20px 20px 20px;
 }

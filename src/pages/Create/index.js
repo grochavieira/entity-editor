@@ -7,6 +7,7 @@ import { FiTrash2 } from "react-icons/fi";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import api from "../../services/api";
 
 import "./styles.css";
@@ -41,35 +42,35 @@ export default function Create() {
     {
       value: "SoilProbe",
       acceptableEntities: ["ManagementZone"],
-      label: "SoilProbe"
+      label: "SoilProbe",
     },
     {
       value: "Farmer",
       acceptableEntities: ["Farm"],
-      label: "Farmer"
+      label: "Farmer",
     },
     {
       value: "Farm",
       acceptableEntities: ["Farmer", "ManagementZone"],
-      label: "Farm"
+      label: "Farm",
     },
     {
       value: "ManagementZone",
       acceptableEntities: ["Farm", "SoilProbe"],
-      label: "ManagementZone"
-    }
+      label: "ManagementZone",
+    },
   ];
 
   // types that can be selected for each entity attribute
   const validTypes = [
     {
       value: "Number",
-      label: "Number"
+      label: "Number",
     },
     {
       value: "Text",
-      label: "Text"
-    }
+      label: "Text",
+    },
   ];
 
   // create the entity and convert it to JSON file
@@ -91,11 +92,11 @@ export default function Create() {
     console.log("ANTES: ", relationships);
 
     if (copyRelationships.length !== 0) {
-      relationships.map(async relationship => {
+      relationships.map(async (relationship) => {
         // const copyRelationship = relationship;
         relationship[`ref${type}`] = {
           type: "Relationship",
-          value: entity.id
+          value: entity.id,
         };
         const id = relationship.id;
         delete relationship.id;
@@ -128,7 +129,7 @@ export default function Create() {
       setNumOfAttributes(sumOfAttributes);
       let object = {
         id: sumOfAttributes,
-        name: newAttribute
+        name: newAttribute,
       };
       setAttributes([...attributes, object]);
     } else {
@@ -138,23 +139,25 @@ export default function Create() {
     console.table(attributes);
   };
 
-  const deleteAttribute = id => {
+  const deleteAttribute = (id) => {
     if (attributes.length >= 1) {
-      const newAttributes = attributes.filter(attribute => attribute.id !== id);
+      const newAttributes = attributes.filter(
+        (attribute) => attribute.id !== id
+      );
       setAttributes(newAttributes);
     }
   };
 
   const addNewRelationship = () => {
     if (newRelationship !== "") {
-      const entitiesId = entities.map(entity => entity.id);
+      const entitiesId = entities.map((entity) => entity.id);
       const indexId = entitiesId.indexOf(`urn:ngsi-ld:${newRelationship}`);
       if (indexId !== -1) {
         // let sumOfRelationships = numOfRelationships + 1;
         // setNumOfRelationships(sumOfRelationships);
         let object = entities[indexId];
         const newEntities = entities.filter(
-          entity => entity.id !== entities[indexId].id
+          (entity) => entity.id !== entities[indexId].id
         );
         setEntities(newEntities);
         console.log(object);
@@ -168,12 +171,12 @@ export default function Create() {
     }
   };
 
-  const deleteRelationship = id => {
+  const deleteRelationship = (id) => {
     const removedEntity = relationships.find(
-      relationship => relationship.id === id
+      (relationship) => relationship.id === id
     );
     const newRelationships = relationships.filter(
-      relationship => relationship.id !== id
+      (relationship) => relationship.id !== id
     );
     setRelationships(newRelationships);
     setEntities([...entities, removedEntity]);
@@ -210,11 +213,10 @@ export default function Create() {
     <>
       <Header create={"current"} />
       <main>
+        <div className="header-block">
+          <p className="title">Entity Form</p>
+        </div>
         <div className="form-block">
-          <div className="header-block">
-            <p className="title">Entity Form</p>
-          </div>
-
           {/* <div className="select-box">
             <label htmlFor="object-type">Select the Object Type: </label>
             <ReactSelect
@@ -246,7 +248,7 @@ export default function Create() {
 
             <Input
               value={type}
-              onChange={e => setType(e.target.value)}
+              onChange={(e) => setType(e.target.value)}
               field="type"
               name="type"
               required
@@ -259,8 +261,8 @@ export default function Create() {
                 field="new attribute"
                 type="text"
                 value={newAttribute}
-                onChange={e => setNewAttribute(e.target.value)}
-                onKeyPress={e => {
+                onChange={(e) => setNewAttribute(e.target.value)}
+                onKeyPress={(e) => {
                   if (e.which === 13) return addNewAttribute();
                 }}
                 required
@@ -275,7 +277,7 @@ export default function Create() {
               </button>
             </div>
 
-            {attributes.map(attribute => (
+            {attributes.map((attribute) => (
               <Scope key={attribute.id} path={attribute.name}>
                 <div className="attributes-container">
                   <span className="attribute-title">{attribute.name}</span>
@@ -289,13 +291,13 @@ export default function Create() {
                         width={130}
                         defaultValue={{ value: "Text", label: "Text" }}
                         options={validTypes}
-                        theme={theme => ({
+                        theme={(theme) => ({
                           ...theme,
                           colors: {
                             ...theme.colors,
                             primary25: "#15b097",
-                            primary: "#333"
-                          }
+                            primary: "#333",
+                          },
                         })}
                         required={true}
                       />
@@ -326,8 +328,8 @@ export default function Create() {
                 field="new relationship"
                 type="text"
                 value={newRelationship}
-                onChange={e => setNewRelationship(e.target.value)}
-                onKeyPress={e => {
+                onChange={(e) => setNewRelationship(e.target.value)}
+                onKeyPress={(e) => {
                   if (e.which === 13) return addNewRelationship();
                 }}
                 required
@@ -342,7 +344,7 @@ export default function Create() {
               </button>
             </div>
 
-            {relationships.map(relationship => (
+            {relationships.map((relationship) => (
               <Scope key={relationship.id} path={`ref${relationship.type}`}>
                 <div className="attributes-container">
                   <span className="attribute-title">{`ref${relationship.type}`}</span>
@@ -405,6 +407,7 @@ export default function Create() {
           </Form>
         </div>
       </main>
+      <Footer />
     </>
   );
 }

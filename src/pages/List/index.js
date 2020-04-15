@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 import SearchIcon from "@material-ui/icons/Search";
-import { MdDelete } from "react-icons/md";
-import { MdUpdate } from "react-icons/md";
+import { FiRefreshCcw, FiTrash2 } from "react-icons/fi";
 import { useHistory } from "react-router-dom";
 
 import Header from "../../components/Header";
 import api from "../../services/api";
 
+import Footer from "../../components/Footer";
 import "./styles.css";
 
 export default function List() {
@@ -15,7 +15,7 @@ export default function List() {
   const [lastSearch, setLastSearch] = useState("");
   const [on, setOn] = useState({
     byId: "on",
-    byType: ""
+    byType: "",
   });
 
   const history = useHistory();
@@ -110,7 +110,7 @@ export default function List() {
       }
     }
 
-    delEntities.map(async entity => {
+    delEntities.map(async (entity) => {
       try {
         await api.delete(`/v2/entities/${entity.id}/attrs/ref${delEntityType}`);
       } catch (err) {
@@ -173,8 +173,8 @@ export default function List() {
           <div className="input-block">
             <input
               value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              onKeyPress={e => {
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyPress={(e) => {
                 if (e.which === 13) {
                   return handleSearch(searchText);
                 }
@@ -186,7 +186,7 @@ export default function List() {
         </div>
       </div>
       <div className="list-container">
-        {entities.map(entity => (
+        {entities.map((entity) => (
           <div key={entity.id} className="entity-block">
             <p>
               <span>Id:</span> {entity.id}
@@ -200,28 +200,25 @@ export default function List() {
               <span>Total Relationships: </span> {countRelationship(entity)}
             </p>
 
-            <div className="action-buttons-block">
-              <div className="update-block">
-                <button
-                  onClick={() => navigateUpdateScreen(entity)}
-                  className="btn-style"
-                >
-                  <MdUpdate size={20} color="#3311ff" />
-                </button>
-              </div>
+            <div className="action-block">
+              <button
+                className="update"
+                onClick={() => navigateUpdateScreen(entity)}
+              >
+                <FiRefreshCcw size={20} color="#fff" /> <span>Atualizar</span>
+              </button>
 
-              <div className="delete-block">
-                <button
-                  className="btn-style"
-                  onClick={() => handleDeleteAnswer(entity)}
-                >
-                  <MdDelete size={20} color="#ff3333" />
-                </button>
-              </div>
+              <button
+                className="delete"
+                onClick={() => handleDeleteAnswer(entity)}
+              >
+                <FiTrash2 size={20} color="#fff" /> <span>Deletar</span>
+              </button>
             </div>
           </div>
         ))}
       </div>
+      <Footer />
     </>
   );
 }

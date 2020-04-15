@@ -27,7 +27,7 @@ export default function Update() {
   const entityId = localStorage.getItem("entityId");
   const validTypes = [
     { value: "Text", label: "Text" },
-    { value: "Number", label: "Number" }
+    { value: "Number", label: "Number" },
   ];
 
   const history = useHistory();
@@ -46,7 +46,7 @@ export default function Update() {
       if (property.startsWith("ref")) {
         let object = {
           id: data[property].value,
-          type: property.slice(3)
+          type: property.slice(3),
         };
         originalArray.push(`ref${object.type}`);
         relationshipsArray.push(object);
@@ -54,7 +54,7 @@ export default function Update() {
         let sumOfAttributes = count + 1;
         let object = {
           id: sumOfAttributes,
-          name: property
+          name: property,
         };
         originalArray.push(object.name);
         attributesArray.push(object);
@@ -78,13 +78,13 @@ export default function Update() {
     loadSelectedEntity();
   }, []);
 
-  const addNewAttribute = newAttribute => {
+  const addNewAttribute = (newAttribute) => {
     if (newAttribute !== "") {
       let sumOfAttributes = numOfAttributes + 1;
       setNumOfAttributes(sumOfAttributes);
       let object = {
         id: sumOfAttributes,
-        name: newAttribute
+        name: newAttribute,
       };
       setAttributes([...attributes, object]);
     } else {
@@ -94,21 +94,23 @@ export default function Update() {
     console.table(attributes);
   };
 
-  const deleteAttribute = id => {
+  const deleteAttribute = (id) => {
     if (attributes.length >= 1) {
-      const newAttributes = attributes.filter(attribute => attribute.id !== id);
+      const newAttributes = attributes.filter(
+        (attribute) => attribute.id !== id
+      );
       setAttributes(newAttributes);
     }
   };
 
   const addNewRelationship = () => {
     if (newRelationship !== "") {
-      const entitiesId = entities.map(entity => entity.id);
+      const entitiesId = entities.map((entity) => entity.id);
       const indexId = entitiesId.indexOf(`urn:ngsi-ld:${newRelationship}`);
       if (indexId !== -1) {
         let object = entities[indexId];
         const newEntities = entities.filter(
-          entity => entity.id !== entities[indexId].id
+          (entity) => entity.id !== entities[indexId].id
         );
         setEntities(newEntities);
         console.log(object);
@@ -122,12 +124,12 @@ export default function Update() {
     }
   };
 
-  const deleteRelationship = id => {
+  const deleteRelationship = (id) => {
     const removedEntity = relationships.find(
-      relationship => relationship.id === id
+      (relationship) => relationship.id === id
     );
     const newRelationships = relationships.filter(
-      relationship => relationship.id !== id
+      (relationship) => relationship.id !== id
     );
     setRelationships(newRelationships);
     setEntities([...entities, removedEntity]);
@@ -144,14 +146,14 @@ export default function Update() {
       }
     }
 
-    const delRelationships = relationships.map(relationship => {
+    const delRelationships = relationships.map((relationship) => {
       if (entitiesId !== relationship.id) {
         return relationship.id;
       }
     });
 
     if (delRelationships.length !== entitiesId.length) {
-      entitiesId.map(async id => {
+      entitiesId.map(async (id) => {
         if (delRelationships.indexOf(id) === -1) {
           await api.delete(`/v2/entities/${id}/attrs/ref${entity.type}`);
         }
@@ -159,10 +161,10 @@ export default function Update() {
     }
 
     if (copyRelationships.length !== 0) {
-      relationships.map(async relationship => {
+      relationships.map(async (relationship) => {
         relationship[`ref${type}`] = {
           type: "Relationship",
-          value: entityId
+          value: entityId,
         };
         const id = relationship.id;
 
@@ -200,161 +202,162 @@ export default function Update() {
         <div className="header-title-block">
           <p>Update Entity Form</p>
         </div>
+        <div className="update-form-block">
+          <Form onSubmit={handleSubmit}>
+            <div className="property-block">
+              <p>
+                <b>id: </b>
+                {entity.id}
+              </p>
+            </div>
 
-        <Form onSubmit={handleSubmit}>
-          <div className="property-block">
-            <p>
-              <b>id: </b>
-              {entity.id}
-            </p>
-          </div>
+            <div className="property-block">
+              <p>
+                <b>type: </b>
+                {entity.type}
+              </p>
+            </div>
 
-          <div className="property-block">
-            <p>
-              <b>type: </b>
-              {entity.type}
-            </p>
-          </div>
+            <div className="attributes-header-block">
+              <Input
+                form=""
+                name="attributes"
+                field="new attribute"
+                value={newAttribute}
+                onChange={(e) => setNewAttribute(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.which === 13) return addNewAttribute(newAttribute);
+                }}
+                required
+              />
 
-          <div className="attributes-header-block">
-            <Input
-              form=""
-              name="attributes"
-              field="new attribute"
-              value={newAttribute}
-              onChange={e => setNewAttribute(e.target.value)}
-              onKeyPress={e => {
-                if (e.which === 13) return addNewAttribute(newAttribute);
-              }}
-              required
-            />
+              <button
+                className="btn-style btn-add"
+                onClick={() => addNewAttribute(newAttribute)}
+                type="button"
+              >
+                Add New Attribute
+              </button>
+            </div>
 
-            <button
-              className="btn-style btn-add"
-              onClick={() => addNewAttribute(newAttribute)}
-              type="button"
-            >
-              Add New Attribute
-            </button>
-          </div>
+            {attributes.map((attribute) => (
+              <Scope key={attribute.id} path={attribute.name}>
+                <div className="attributes-container">
+                  <span className="attribute-title">{attribute.name}</span>
 
-          {attributes.map(attribute => (
-            <Scope key={attribute.id} path={attribute.name}>
-              <div className="attributes-container">
-                <span className="attribute-title">{attribute.name}</span>
+                  <div className="attributes-block">
+                    <div className="select-box">
+                      <label htmlFor="type">type: </label>
+                      <Select
+                        className="select"
+                        name={`type`}
+                        width={130}
+                        defaultValue={{ value: "Text", label: "Text" }}
+                        options={validTypes}
+                        theme={(theme) => ({
+                          ...theme,
+                          colors: {
+                            ...theme.colors,
+                            primary25: "#15b097",
+                            primary: "#333",
+                          },
+                        })}
+                        required={true}
+                      />
+                    </div>
 
-                <div className="attributes-block">
-                  <div className="select-box">
-                    <label htmlFor="type">type: </label>
-                    <Select
-                      className="select"
-                      name={`type`}
-                      width={130}
-                      defaultValue={{ value: "Text", label: "Text" }}
-                      options={validTypes}
-                      theme={theme => ({
-                        ...theme,
-                        colors: {
-                          ...theme.colors,
-                          primary25: "#15b097",
-                          primary: "#333"
-                        }
-                      })}
-                      required={true}
-                    />
+                    <div className="input-block">
+                      <Input name="value" field="value" required />
+                    </div>
+
+                    <button
+                      className="btn-trash attributes"
+                      onClick={() => deleteAttribute(attribute.id)}
+                      type="button"
+                    >
+                      <span>
+                        <FiTrash2 size={20} color="#333" />
+                      </span>
+                    </button>
                   </div>
-
-                  <div className="input-block">
-                    <Input name="value" field="value" required />
-                  </div>
-
-                  <button
-                    className="btn-trash attributes"
-                    onClick={() => deleteAttribute(attribute.id)}
-                    type="button"
-                  >
-                    <span>
-                      <FiTrash2 size={20} color="#333" />
-                    </span>
-                  </button>
                 </div>
-              </div>
-            </Scope>
-          ))}
+              </Scope>
+            ))}
 
-          <div className="attributes-header-block">
-            <Input
-              form=""
-              name="attributes"
-              field="new relationship"
-              type="text"
-              value={newRelationship}
-              onChange={e => setNewRelationship(e.target.value)}
-              onKeyPress={e => {
-                if (e.which === 13) return addNewRelationship();
-              }}
-              required
-            />
+            <div className="attributes-header-block">
+              <Input
+                form=""
+                name="attributes"
+                field="new relationship"
+                type="text"
+                value={newRelationship}
+                onChange={(e) => setNewRelationship(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.which === 13) return addNewRelationship();
+                }}
+                required
+              />
 
-            <button
-              className="btn-style btn-add"
-              onClick={addNewRelationship}
-              type="button"
-            >
-              Add New Relationship
-            </button>
-          </div>
+              <button
+                className="btn-style btn-add"
+                onClick={addNewRelationship}
+                type="button"
+              >
+                Add New Relationship
+              </button>
+            </div>
 
-          {relationships.map(relationship => (
-            <Scope key={relationship.id} path={`ref${relationship.type}`}>
-              <div className="attributes-container">
-                <span className="attribute-title">{`ref${relationship.type}`}</span>
+            {relationships.map((relationship) => (
+              <Scope key={relationship.id} path={`ref${relationship.type}`}>
+                <div className="attributes-container">
+                  <span className="attribute-title">{`ref${relationship.type}`}</span>
 
-                <div className="attributes-block relate">
-                  <div className="relationship-block">
-                    <span>value: </span>
+                  <div className="attributes-block relate">
+                    <div className="relationship-block">
+                      <span>value: </span>
 
-                    <div className="relationship-box">
-                      <div className="relationship-value">
-                        <Input
-                          name="type"
-                          value="Relationship"
-                          onChange={() => {}}
-                          invisible={true}
-                        />
-                        <Input
-                          name="value"
-                          value={relationship.id}
-                          onChange={() => {}}
-                          invisible={true}
-                        />
-                        <span>
-                          <b>Id:</b> {relationship.id}
-                        </span>
+                      <div className="relationship-box">
+                        <div className="relationship-value">
+                          <Input
+                            name="type"
+                            value="Relationship"
+                            onChange={() => {}}
+                            invisible={true}
+                          />
+                          <Input
+                            name="value"
+                            value={relationship.id}
+                            onChange={() => {}}
+                            invisible={true}
+                          />
+                          <span>
+                            <b>Id:</b> {relationship.id}
+                          </span>
+                        </div>
+
+                        <button
+                          className="btn-trash relate"
+                          onClick={() => deleteRelationship(relationship.id)}
+                          type="button"
+                        >
+                          <span>
+                            <FiTrash2 size={20} color="#333" />
+                          </span>
+                        </button>
                       </div>
-
-                      <button
-                        className="btn-trash relate"
-                        onClick={() => deleteRelationship(relationship.id)}
-                        type="button"
-                      >
-                        <span>
-                          <FiTrash2 size={20} color="#333" />
-                        </span>
-                      </button>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Scope>
-          ))}
+              </Scope>
+            ))}
 
-          <div className="update-block">
-            <button className="btn-style" type="submit">
-              Atualizar
-            </button>
-          </div>
-        </Form>
+            <div className="update-block">
+              <button className="btn-style" type="submit">
+                Atualizar
+              </button>
+            </div>
+          </Form>
+        </div>
       </div>
     </>
   );
