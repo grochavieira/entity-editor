@@ -55,7 +55,7 @@ export default function About() {
             <div className="profile">
               <span>Thomas Anderson Ferrari </span>
               <img src={thomas} alt="Thomas Anderson Ferrari" />
-              <a className="github-link" href="https://github.com/grochavieira">
+              <a className="github-link" href="https://github.com/thomasafc">
                 Github Link
               </a>
             </div>

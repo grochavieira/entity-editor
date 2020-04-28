@@ -167,7 +167,11 @@ export default function List() {
 
     delEntities.map(async (entity) => {
       try {
-        await api.delete(`/v2/entities/${entity.id}/attrs/ref${delEntityType}`);
+        await api.delete(
+          `/v2/entities/${entity.id}/attrs/ref${delEntityType}${
+            delEntityId.split(":")[3]
+          }`
+        );
       } catch (err) {
         console.log(err);
       }

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Form } from "@unform/web";
 import { Scope } from "@unform/core";
 import { FiTrash2 } from "react-icons/fi";
@@ -30,6 +30,35 @@ export default function Update() {
     { value: "Number", label: "Number" },
   ];
 
+  const selectBoxEntityTypeItems = [
+    {
+      value: "SoilProbe",
+      acceptableEntities: [["ManagementZone", 1]],
+      label: "SoilProbe",
+    },
+    {
+      value: "Farmer",
+      acceptableEntities: [["Farm", -1]],
+      label: "Farmer",
+    },
+    {
+      value: "Farm",
+      acceptableEntities: [
+        ["Farmer", 1],
+        ["ManagementZone", -1],
+      ],
+      label: "Farm",
+    },
+    {
+      value: "ManagementZone",
+      acceptableEntities: [
+        ["Farm", 1],
+        ["SoilProbe", -1],
+      ],
+      label: "ManagementZone",
+    },
+  ];
+
   const history = useHistory();
 
   async function loadSelectedEntity() {
@@ -48,7 +77,9 @@ export default function Update() {
           id: data[property].value,
           type: property.slice(3),
         };
+        console.log(object);
         originalArray.push(`ref${object.type}`);
+        object.type = object.type.replace(/[0-9]/g, "");
         relationshipsArray.push(object);
       } else if (count >= 0) {
         let sumOfAttributes = count + 1;
@@ -56,6 +87,7 @@ export default function Update() {
           id: sumOfAttributes,
           name: property,
         };
+
         originalArray.push(object.name);
         attributesArray.push(object);
       }
@@ -68,9 +100,10 @@ export default function Update() {
   }
 
   async function loadEntities() {
-    const { data } = await api.get(`/v2/entities`);
+    const { data } = await api.get(`/v2/entities?limit=1000`);
 
     setEntities(data);
+    console.log(data);
   }
 
   useEffect(() => {
@@ -103,8 +136,90 @@ export default function Update() {
     }
   };
 
+  // checks whether the entity to be created can relate to the specified entity
+  function validateRelationship() {
+    if (newRelationship === "") {
+      alert("Please type a valid entity to create a new relationship!");
+      return false;
+    }
+
+    console.log(originalAttributes);
+
+    let acceptableEntities = [];
+    for (let object of selectBoxEntityTypeItems) {
+      console.log(object);
+      if (type === object.value) {
+        acceptableEntities = object.acceptableEntities;
+      }
+    }
+    const str = newRelationship.split(":");
+    const entityType = str[0];
+    const entityId = str[1];
+    let canRelate = false;
+    let maxRelationship = false;
+
+    for (let i = 0; i < acceptableEntities.length; i++) {
+      const acceptableEntity = acceptableEntities[i];
+      if (entityType === acceptableEntity[0]) {
+        if (acceptableEntity[1] === -1) {
+          const sumOfEntities = entities.filter((entity) => {
+            if (
+              entity.type === type &&
+              `ref${entityType}${entityId}` in entity &&
+              entity[`ref${entityType}${entityId}`].value ===
+                `urn:ngsi-ld:${newRelationship}`
+            ) {
+              return entity;
+            }
+          });
+          if (sumOfEntities.length > 0) {
+            canRelate = false;
+          } else {
+            canRelate = true;
+          }
+        } else {
+          const sumOfTypes = relationships.map(
+            (relationship) => relationship.type === entityType
+          );
+          if (sumOfTypes.length === 0) {
+            canRelate = true;
+          } else {
+            alert("you have already added the maximum limit for that entity");
+            canRelate = false;
+            maxRelationship = true;
+          }
+        }
+      }
+    }
+    if (!canRelate && !maxRelationship) {
+      console.log("entrou");
+      console.log(entityType, entityId);
+      console.log(originalAttributes);
+      let hasAttribute = originalAttributes.filter((attribute) => {
+        return attribute === `ref${entityType}${entityId}`;
+      });
+      let hasRelationship = relationships.filter((relationship) => {
+        return relationship.id === `urn:ngsi-ld:${entityType}:${entityId}`;
+      });
+      console.log(hasAttribute);
+      console.log(relationships);
+      if (hasAttribute.length === 1 && hasRelationship.length === 0) {
+        canRelate = true;
+        console.log("coisa");
+      } else {
+        alert("The entity specified is already related to another entity");
+      }
+    } else if (!canRelate) {
+      alert(
+        "Sorry, but this entity can´t create a relationship with the specified type!"
+      );
+    }
+    return canRelate;
+  }
+
   const addNewRelationship = () => {
-    if (newRelationship !== "") {
+    const canRelate = validateRelationship();
+    if (canRelate) {
       const entitiesId = entities.map((entity) => entity.id);
       const indexId = entitiesId.indexOf(`urn:ngsi-ld:${newRelationship}`);
       if (indexId !== -1) {
@@ -119,8 +234,6 @@ export default function Update() {
       } else {
         alert("The entity id specified does not exist!");
       }
-    } else {
-      alert("Please, type a valid entity id to create a relationship!");
     }
   };
 
@@ -135,7 +248,7 @@ export default function Update() {
     setEntities([...entities, removedEntity]);
   };
 
-  async function handleSubmit(updatedEntity, { reset }) {
+  async function handleSubmit(updatedEntity) {
     const copyRelationships = relationships;
     let error = false;
 
@@ -155,14 +268,18 @@ export default function Update() {
     if (delRelationships.length !== entitiesId.length) {
       entitiesId.map(async (id) => {
         if (delRelationships.indexOf(id) === -1) {
-          await api.delete(`/v2/entities/${id}/attrs/ref${entity.type}`);
+          await api.delete(
+            `/v2/entities/${id}/attrs/ref${entity.type}${
+              entity.id.split(":")[3]
+            }`
+          );
         }
       });
     }
 
     if (copyRelationships.length !== 0) {
       relationships.map(async (relationship) => {
-        relationship[`ref${type}`] = {
+        relationship[`ref${type}${entityId.split(":")[3]}`] = {
           type: "Relationship",
           value: entityId,
         };
@@ -308,9 +425,14 @@ export default function Update() {
             </div>
 
             {relationships.map((relationship) => (
-              <Scope key={relationship.id} path={`ref${relationship.type}`}>
+              <Scope
+                key={relationship.id}
+                path={`ref${relationship.type}${relationship.id.split(":")[3]}`}
+              >
                 <div className="attributes-container">
-                  <span className="attribute-title">{`ref${relationship.type}`}</span>
+                  <span className="attribute-title">{`ref${relationship.type}${
+                    relationship.id.split(":")[3]
+                  }`}</span>
 
                   <div className="attributes-block relate">
                     <div className="relationship-block">
