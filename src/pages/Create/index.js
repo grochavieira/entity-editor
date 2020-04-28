@@ -26,19 +26,7 @@ export default function Create() {
     label: "SoilProbe",
   });
 
-  async function loadEntities() {
-    const { data } = await api.get("/v2/entities?limit=1000");
-
-    setEntities(data);
-    console.log(data);
-  }
-
-  useEffect(() => {
-    loadEntities();
-  }, []);
-
-  // object types to be selected in the SelectBox
-  const objectTypes = [
+  const selectBoxEntityTypeItems = [
     {
       value: "SoilProbe",
       acceptableEntities: [["ManagementZone", 1]],
@@ -67,8 +55,7 @@ export default function Create() {
     },
   ];
 
-  // types that can be selected for each entity attribute
-  const validTypes = [
+  const selectBoxTypeItems = [
     {
       value: "Number",
       label: "Number",
@@ -79,6 +66,18 @@ export default function Create() {
     },
   ];
 
+  // load the entities already created in the mongo db
+  async function loadEntities() {
+    const { data } = await api.get("/v2/entities?limit=1000");
+
+    setEntities(data);
+  }
+
+  useEffect(() => {
+    loadEntities();
+  }, []);
+
+  // reset the form and related variables
   function reset() {
     setAttributes([]);
     setNewAttribute("");
@@ -88,25 +87,29 @@ export default function Create() {
     loadEntities();
   }
 
-  // create the entity and convert it to JSON file
+  // create the entity and send it to the database
   async function handleSubmit(entity) {
     const copyRelationships = relationships;
+    setRelationships([]);
     let error = false;
     const { data } = await api.get(`/v2/entities?type=${type}&limit=100`);
     let newId;
+
+    // generate an id for the new entity
     if (data.length !== 0) {
       let substring = data[data.length - 1].id.split(`urn:ngsi-ld:${type}:`);
       newId = parseInt(substring[1]) + 1;
-      console.log(substring[1]);
     } else {
       newId = 1;
     }
+
+    // update the id of the new entity
     entity.id = `urn:ngsi-ld:${type}:${newId}`;
 
+    // update the related entities
     if (copyRelationships.length !== 0) {
       relationships.map(async (relationship) => {
-        // const copyRelationship = relationship;
-        relationship[`ref${type}`] = {
+        relationship[`ref${type}${newId}`] = {
           type: "Relationship",
           value: entity.id,
         };
@@ -122,7 +125,6 @@ export default function Create() {
       await api.post("/v2/entities", entity);
     } catch (e) {
       error = true;
-      console.log(e);
     }
     if (error) {
       alert("It was not possible to create a new entity!");
@@ -132,6 +134,7 @@ export default function Create() {
     }
   }
 
+  // create a temporary attribute for the entity
   const addNewAttribute = () => {
     if (newAttribute !== "") {
       let sumOfAttributes = numOfAttributes + 1;
@@ -148,6 +151,7 @@ export default function Create() {
     console.table(attributes);
   };
 
+  // delete the entity temporary attribute
   const deleteAttribute = (id) => {
     if (attributes.length >= 1) {
       const newAttributes = attributes.filter(
@@ -157,6 +161,7 @@ export default function Create() {
     }
   };
 
+  // checks whether the entity to be created can relate to the specified entity
   function validateRelationship() {
     if (newRelationship === "") {
       alert("Please type a valid entity to create a new relationship!");
@@ -166,26 +171,22 @@ export default function Create() {
     const { acceptableEntities } = selectedObject;
     const str = newRelationship.split(":");
     const entityType = str[0];
+    const entityId = str[1];
 
     for (let i = 0; i < acceptableEntities.length; i++) {
       const acceptableEntity = acceptableEntities[i];
-      console.log(acceptableEntity);
-      console.log("relationships: ", relationships);
       if (entityType === acceptableEntity[0]) {
         if (acceptableEntity[1] === -1) {
           const sumOfEntities = entities.filter((entity) => {
             if (
               entity.type === type &&
-              `ref${entityType}` in entity &&
-              entity[`ref${entityType}`].value ===
+              `ref${entityType}${entityId}` in entity &&
+              entity[`ref${entityType}${entityId}`].value ===
                 `urn:ngsi-ld:${newRelationship}`
             ) {
-              console.log(entity);
               return entity;
             }
           });
-          console.log("***********");
-          console.log(sumOfEntities);
           if (sumOfEntities.length > 0) {
             alert("The entity specified is already related to another entity");
             return false;
@@ -204,13 +205,13 @@ export default function Create() {
         }
       }
     }
-
     alert(
       "Sorry, but this entity can´t create a relationship with the specified type!"
     );
     return false;
   }
 
+  // create a temporary relationship with the entity to be created
   const addNewRelationship = () => {
     let canRelate = validateRelationship();
     if (canRelate) {
@@ -222,16 +223,15 @@ export default function Create() {
           (entity) => entity.id !== entities[indexId].id
         );
         setEntities(newEntities);
-        console.log(object);
         setRelationships([...relationships, object]);
         setNewRelationship("");
-        console.log(entities);
       } else {
         alert("The entity id specified does not exist!");
       }
     }
   };
 
+  // delete the entity temporary relationship
   const deleteRelationship = (id) => {
     const removedEntity = relationships.find(
       (relationship) => relationship.id === id
@@ -241,16 +241,16 @@ export default function Create() {
     );
     setRelationships(newRelationships);
     setEntities([...entities, removedEntity]);
-    console.log(entities);
   };
 
+  // update the entity type to be created in the select box
   function handleObjectChange(selectedOption) {
     setSelectedObject(selectedOption);
     setType(selectedOption.value);
     reset();
-    console.log(selectedOption);
   }
 
+  // style for the entity type select box
   const customSelectObjectStyles = {
     control: (base) => ({
       ...base,
@@ -290,7 +290,7 @@ export default function Create() {
               id="object-type"
               value={selectedObject}
               onChange={handleObjectChange}
-              options={objectTypes}
+              options={selectBoxEntityTypeItems}
               theme={(theme) => ({
                 ...theme,
                 colors: {
@@ -356,7 +356,7 @@ export default function Create() {
                         name={`type`}
                         width={130}
                         defaultValue={{ value: "Text", label: "Text" }}
-                        options={validTypes}
+                        options={selectBoxTypeItems}
                         theme={(theme) => ({
                           ...theme,
                           colors: {
@@ -411,9 +411,14 @@ export default function Create() {
             </div>
 
             {relationships.map((relationship) => (
-              <Scope key={relationship.id} path={`ref${relationship.type}`}>
+              <Scope
+                key={relationship.id}
+                path={`ref${relationship.type}${relationship.id.split(":")[3]}`}
+              >
                 <div className="attributes-container">
-                  <span className="attribute-title">{`ref${relationship.type}`}</span>
+                  <span className="attribute-title">{`ref${relationship.type}${
+                    relationship.id.split(":")[3]
+                  }`}</span>
 
                   <div className="attributes-block relate">
                     <div className="relationship-block">
@@ -449,17 +454,6 @@ export default function Create() {
                         </button>
                       </div>
                     </div>
-
-                    {/* <button
-                      className="button style-btn relate-btn"
-                      onClick={() => deleteRelationship(relationship.id)}
-                      type="button"
-                    >
-                      <div className="translate"></div>
-                      <span className="trash-icon">
-                        <DeleteIcon />
-                      </span>
-                    </button> */}
                   </div>
                 </div>
               </Scope>
