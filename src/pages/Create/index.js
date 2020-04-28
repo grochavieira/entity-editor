@@ -13,18 +13,18 @@ import api from "../../services/api";
 import "./styles.css";
 
 export default function Create() {
-  const [type, setType] = useState("");
+  const [type, setType] = useState("SoilProbe");
   const [newAttribute, setNewAttribute] = useState("");
   const [newRelationship, setNewRelationship] = useState("");
   const [entities, setEntities] = useState([]);
   const [numOfAttributes, setNumOfAttributes] = useState(0);
   const [attributes, setAttributes] = useState([]);
   const [relationships, setRelationships] = useState([]);
-  // const [selectedObject, setSelectedObject] = useState({
-  //   value: "SoilProbe",
-  //   acceptableEntities: ["ManagementZone"],
-  //   label: "SoilProbe"
-  // });
+  const [selectedObject, setSelectedObject] = useState({
+    value: "SoilProbe",
+    acceptableEntities: [["ManagementZone", 1]],
+    label: "SoilProbe",
+  });
 
   async function loadEntities() {
     const { data } = await api.get("/v2/entities?limit=1000");
@@ -41,22 +41,28 @@ export default function Create() {
   const objectTypes = [
     {
       value: "SoilProbe",
-      acceptableEntities: ["ManagementZone"],
+      acceptableEntities: [["ManagementZone", 1]],
       label: "SoilProbe",
     },
     {
       value: "Farmer",
-      acceptableEntities: ["Farm"],
+      acceptableEntities: [["Farm", -1]],
       label: "Farmer",
     },
     {
       value: "Farm",
-      acceptableEntities: ["Farmer", "ManagementZone"],
+      acceptableEntities: [
+        ["Farmer", 1],
+        ["ManagementZone", -1],
+      ],
       label: "Farm",
     },
     {
       value: "ManagementZone",
-      acceptableEntities: ["Farm", "SoilProbe"],
+      acceptableEntities: [
+        ["Farm", 1],
+        ["SoilProbe", -1],
+      ],
       label: "ManagementZone",
     },
   ];
@@ -73,10 +79,18 @@ export default function Create() {
     },
   ];
 
-  // create the entity and convert it to JSON file
-  async function handleSubmit(entity, { reset }) {
-    const copyRelationships = relationships;
+  function reset() {
+    setAttributes([]);
+    setNewAttribute("");
+    setNumOfAttributes(0);
     setRelationships([]);
+    setNewRelationship("");
+    loadEntities();
+  }
+
+  // create the entity and convert it to JSON file
+  async function handleSubmit(entity) {
+    const copyRelationships = relationships;
     let error = false;
     const { data } = await api.get(`/v2/entities?type=${type}&limit=100`);
     let newId;
@@ -88,8 +102,6 @@ export default function Create() {
       newId = 1;
     }
     entity.id = `urn:ngsi-ld:${type}:${newId}`;
-
-    console.log("ANTES: ", relationships);
 
     if (copyRelationships.length !== 0) {
       relationships.map(async (relationship) => {
@@ -105,8 +117,6 @@ export default function Create() {
       });
     }
 
-    console.log("DEPOIS: ", relationships);
-
     // send the new entity to ORION
     try {
       await api.post("/v2/entities", entity);
@@ -118,8 +128,7 @@ export default function Create() {
       alert("It was not possible to create a new entity!");
     } else {
       alert("Entity created successfully!");
-      setRelationships([]);
-      loadEntities();
+      reset();
     }
   }
 
@@ -148,13 +157,66 @@ export default function Create() {
     }
   };
 
+  function validateRelationship() {
+    if (newRelationship === "") {
+      alert("Please type a valid entity to create a new relationship!");
+      return false;
+    }
+
+    const { acceptableEntities } = selectedObject;
+    const str = newRelationship.split(":");
+    const entityType = str[0];
+
+    for (let i = 0; i < acceptableEntities.length; i++) {
+      const acceptableEntity = acceptableEntities[i];
+      console.log(acceptableEntity);
+      console.log("relationships: ", relationships);
+      if (entityType === acceptableEntity[0]) {
+        if (acceptableEntity[1] === -1) {
+          const sumOfEntities = entities.filter((entity) => {
+            if (
+              entity.type === type &&
+              `ref${entityType}` in entity &&
+              entity[`ref${entityType}`].value ===
+                `urn:ngsi-ld:${newRelationship}`
+            ) {
+              console.log(entity);
+              return entity;
+            }
+          });
+          console.log("***********");
+          console.log(sumOfEntities);
+          if (sumOfEntities.length > 0) {
+            alert("The entity specified is already related to another entity");
+            return false;
+          }
+          return true;
+        } else {
+          const sumOfTypes = relationships.map(
+            (relationship) => relationship.type === entityType
+          );
+          if (sumOfTypes.length === 0) {
+            return true;
+          } else {
+            alert("you have already added the maximum limit for that entity");
+            return false;
+          }
+        }
+      }
+    }
+
+    alert(
+      "Sorry, but this entity can´t create a relationship with the specified type!"
+    );
+    return false;
+  }
+
   const addNewRelationship = () => {
-    if (newRelationship !== "") {
+    let canRelate = validateRelationship();
+    if (canRelate) {
       const entitiesId = entities.map((entity) => entity.id);
       const indexId = entitiesId.indexOf(`urn:ngsi-ld:${newRelationship}`);
       if (indexId !== -1) {
-        // let sumOfRelationships = numOfRelationships + 1;
-        // setNumOfRelationships(sumOfRelationships);
         let object = entities[indexId];
         const newEntities = entities.filter(
           (entity) => entity.id !== entities[indexId].id
@@ -163,11 +225,10 @@ export default function Create() {
         console.log(object);
         setRelationships([...relationships, object]);
         setNewRelationship("");
+        console.log(entities);
       } else {
         alert("The entity id specified does not exist!");
       }
-    } else {
-      alert("Please, type a valid entity id to create a relationship!");
     }
   };
 
@@ -180,34 +241,39 @@ export default function Create() {
     );
     setRelationships(newRelationships);
     setEntities([...entities, removedEntity]);
+    console.log(entities);
   };
 
-  // function handleObjectChange(selectedOption) {
-  //   setSelectedObject(selectedOption);
-  // }
+  function handleObjectChange(selectedOption) {
+    setSelectedObject(selectedOption);
+    setType(selectedOption.value);
+    reset();
+    console.log(selectedOption);
+  }
 
-  // const customSelectObjectStyles = {
-  //   control: base => ({
-  //     ...base,
-  //     height: 25,
-  //     fontSize: 14,
-  //     minHeight: 35,
-  //     borderRadius: 2
-  //   }),
-  //   menu: base => ({
-  //     ...base,
-  //     borderRadius: 2,
-  //     hyphens: "auto",
-  //     marginTop: 0,
-  //     textAlign: "left",
-  //     wordWrap: "break-word"
-  //   }),
-  //   menuList: base => ({
-  //     ...base,
-  //     padding: 0,
-  //     opacity: 1
-  //   })
-  // };
+  const customSelectObjectStyles = {
+    control: (base) => ({
+      ...base,
+      marginTop: 5,
+      height: 25,
+      fontSize: 14,
+      minHeight: 35,
+      borderRadius: 2,
+    }),
+    menu: (base) => ({
+      ...base,
+      borderRadius: 2,
+      hyphens: "auto",
+      marginTop: 0,
+      textAlign: "left",
+      wordWrap: "break-word",
+    }),
+    menuList: (base) => ({
+      ...base,
+      padding: 0,
+      opacity: 1,
+    }),
+  };
 
   return (
     <>
@@ -217,7 +283,7 @@ export default function Create() {
           <p className="title">Entity Form</p>
         </div>
         <div className="form-block">
-          {/* <div className="select-box">
+          <div className="select-box">
             <label htmlFor="object-type">Select the Object Type: </label>
             <ReactSelect
               name="name"
@@ -225,17 +291,17 @@ export default function Create() {
               value={selectedObject}
               onChange={handleObjectChange}
               options={objectTypes}
-              theme={theme => ({
+              theme={(theme) => ({
                 ...theme,
                 colors: {
                   ...theme.colors,
                   primary25: "#15b097",
-                  primary: "#333"
-                }
+                  primary: "#333",
+                },
               })}
               styles={customSelectObjectStyles}
             />
-          </div> */}
+          </div>
 
           <Form onSubmit={handleSubmit}>
             <Input
@@ -248,10 +314,10 @@ export default function Create() {
 
             <Input
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              onChange={() => {}}
               field="type"
               name="type"
-              required
+              invisible={true}
             />
 
             <div className="attributes-header-block">
