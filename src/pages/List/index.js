@@ -25,6 +25,7 @@ export default function List() {
 
   const history = useHistory();
 
+  // Reset the search and related variables
   function reset() {
     setTotalEntities(0);
     setCurrentPage(1);
@@ -32,6 +33,7 @@ export default function List() {
     setEntities([]);
   }
 
+  // Search and return the specified entities from mongo DB
   async function handleSearch(search) {
     if (search === "") {
       alert("Please, you need to write a type to search for it first!");
@@ -49,7 +51,6 @@ export default function List() {
             aux.push(data);
             reset();
             setEntities(aux);
-            console.log(data);
             setSearchText("");
           } catch (error) {
             alert("The entity id specified doesn´t exist!");
@@ -65,8 +66,6 @@ export default function List() {
         );
         const { data } = response;
         setTotalEntities(response.headers["fiware-total-count"]);
-        console.log(response);
-        console.log(data);
         if (data.length === 0) {
           alert("The entity type specified doesn´t exist!");
         } else {
@@ -80,6 +79,7 @@ export default function List() {
     }
   }
 
+  // Change the page for the rendered entities
   async function changePage(pageNumber) {
     setCurrentPage(pageNumber);
     const offset = pageNumber * entitiesPerPage - entitiesPerPage;
@@ -89,6 +89,7 @@ export default function List() {
     setEntities(data);
   }
 
+  // Go back to the previous page in the pagination
   function goBack() {
     if (currentPage > 1) {
       const previousPage = currentPage - 1;
@@ -97,6 +98,7 @@ export default function List() {
     window.scrollTo(0, 0);
   }
 
+  // Go forward to the next page in the pagination
   function goForward() {
     if (currentPage < Math.ceil(totalEntities / entitiesPerPage)) {
       const nextPage = currentPage + 1;
@@ -105,6 +107,7 @@ export default function List() {
     window.scrollTo(0, 0);
   }
 
+  // Change the search to id or to a specified entity type
   function changeSearch(search) {
     if (search === "id") {
       setOn({ byId: "on", byType: "" });
@@ -115,18 +118,16 @@ export default function List() {
 
   function countRelationship(entity) {
     const keys = Object.keys(entity);
-
     let count = 0;
-
     for (let key of keys) {
       if (key.startsWith("ref")) {
         count++;
       }
     }
-
     return count;
   }
 
+  // Ask for permission to delete the selected entity
   async function handleDeleteAnswer(entity) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this entity"
@@ -136,9 +137,9 @@ export default function List() {
     }
   }
 
+  // Delete the entity and update the relationship attribute
+  // of its related entities
   async function handleDelete(entity) {
-    console.log(entity);
-
     const delRelationshipsId = [];
     let delEntityId = entity.id;
     let delEntityType = entity.type;
@@ -149,7 +150,6 @@ export default function List() {
     }
 
     const response = await api.delete(`/v2/entities/${delEntityId}`);
-    console.log("RESPONSE: ", response);
 
     let delEntities = [];
     if (delRelationshipsId.length > 0) {
@@ -182,6 +182,7 @@ export default function List() {
     } else handleSearch(lastSearch);
   }
 
+  // Go forward to the update page
   function navigateUpdateScreen(entity) {
     localStorage.setItem("entityId", entity.id);
     history.push("/update");

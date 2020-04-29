@@ -61,6 +61,7 @@ export default function Update() {
 
   const history = useHistory();
 
+  // Load all the properties of the entity selected for update
   async function loadSelectedEntity() {
     const { data } = await api.get(`/v2/entities/${entityId}`);
 
@@ -77,7 +78,6 @@ export default function Update() {
           id: data[property].value,
           type: property.slice(3),
         };
-        console.log(object);
         originalArray.push(`ref${object.type}`);
         object.type = object.type.replace(/[0-9]/g, "");
         relationshipsArray.push(object);
@@ -99,11 +99,11 @@ export default function Update() {
     setOriginalAttributes(originalArray);
   }
 
+  // Load all entities in the database
   async function loadEntities() {
     const { data } = await api.get(`/v2/entities?limit=1000`);
 
     setEntities(data);
-    console.log(data);
   }
 
   useEffect(() => {
@@ -111,6 +111,7 @@ export default function Update() {
     loadSelectedEntity();
   }, []);
 
+  // Add a temporary attribute for the entity
   const addNewAttribute = (newAttribute) => {
     if (newAttribute !== "") {
       let sumOfAttributes = numOfAttributes + 1;
@@ -127,6 +128,7 @@ export default function Update() {
     console.table(attributes);
   };
 
+  // Delete the temporary attribute created for the entity
   const deleteAttribute = (id) => {
     if (attributes.length >= 1) {
       const newAttributes = attributes.filter(
@@ -143,11 +145,8 @@ export default function Update() {
       return false;
     }
 
-    console.log(originalAttributes);
-
     let acceptableEntities = [];
     for (let object of selectBoxEntityTypeItems) {
-      console.log(object);
       if (type === object.value) {
         acceptableEntities = object.acceptableEntities;
       }
@@ -157,6 +156,7 @@ export default function Update() {
     const entityId = str[1];
     let canRelate = false;
     let maxRelationship = false;
+    let alreadyAlerted = false;
 
     for (let i = 0; i < acceptableEntities.length; i++) {
       const acceptableEntity = acceptableEntities[i];
@@ -187,29 +187,24 @@ export default function Update() {
             alert("you have already added the maximum limit for that entity");
             canRelate = false;
             maxRelationship = true;
+            alreadyAlerted = true;
           }
         }
       }
     }
     if (!canRelate && !maxRelationship) {
-      console.log("entrou");
-      console.log(entityType, entityId);
-      console.log(originalAttributes);
       let hasAttribute = originalAttributes.filter((attribute) => {
         return attribute === `ref${entityType}${entityId}`;
       });
       let hasRelationship = relationships.filter((relationship) => {
         return relationship.id === `urn:ngsi-ld:${entityType}:${entityId}`;
       });
-      console.log(hasAttribute);
-      console.log(relationships);
       if (hasAttribute.length === 1 && hasRelationship.length === 0) {
         canRelate = true;
-        console.log("coisa");
       } else {
         alert("The entity specified is already related to another entity");
       }
-    } else if (!canRelate) {
+    } else if (!alreadyAlerted && !canRelate) {
       alert(
         "Sorry, but this entity can´t create a relationship with the specified type!"
       );
@@ -217,6 +212,7 @@ export default function Update() {
     return canRelate;
   }
 
+  // Create a temporary relationship for the entity
   const addNewRelationship = () => {
     const canRelate = validateRelationship();
     if (canRelate) {
@@ -228,7 +224,6 @@ export default function Update() {
           (entity) => entity.id !== entities[indexId].id
         );
         setEntities(newEntities);
-        console.log(object);
         setRelationships([...relationships, object]);
         setNewRelationship("");
       } else {
@@ -237,6 +232,7 @@ export default function Update() {
     }
   };
 
+  // Delete the temporary relationship created for the entity
   const deleteRelationship = (id) => {
     const removedEntity = relationships.find(
       (relationship) => relationship.id === id
@@ -248,6 +244,8 @@ export default function Update() {
     setEntities([...entities, removedEntity]);
   };
 
+  // Update the entity and the relationship attribute
+  // of its related entities
   async function handleSubmit(updatedEntity) {
     const copyRelationships = relationships;
     let error = false;
@@ -292,7 +290,6 @@ export default function Update() {
       });
     }
 
-    // send the updated entity to ORION
     try {
       if (Object.keys(updatedEntity).length > 0) {
         await api.put(`/v2/entities/${entityId}/attrs`, updatedEntity);

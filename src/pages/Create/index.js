@@ -148,7 +148,6 @@ export default function Create() {
       alert("Please, type the attribute name to create a new attribute!");
     }
     setNewAttribute("");
-    console.table(attributes);
   };
 
   // delete the entity temporary attribute
