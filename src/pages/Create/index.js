@@ -154,9 +154,6 @@ export default function Create() {
     const { data } = await api.get(`/v2/entities?type=${type}&limit=1000`);
     let newId;
 
-    console.log("=====entity=====");
-    console.log(entity);
-
     // generate an id for the new entity
     if (data.length !== 0) {
       let substring = data[data.length - 1].id.split(`urn:ngsi-ld:${type}:`);
@@ -247,6 +244,8 @@ export default function Create() {
       const entitiesId = entities.map((entity) => entity.id);
       const indexId = entitiesId.indexOf(newRelationship.value);
       let canRelate = true;
+
+      // verify if the selected entity can be related with the entity to be created
       for (let i = 0; i < selectedObject.acceptableEntities.length; i++) {
         if (
           selectedObject.acceptableEntities[i][1] === 1 &&
@@ -315,7 +314,7 @@ export default function Create() {
     reset();
   }
 
-  // style for the entity type select box
+  // style for the select boxes
   const customSelectObjectStyles = {
     control: (base) => ({
       ...base,

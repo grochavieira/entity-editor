@@ -125,30 +125,6 @@ export default function List() {
     }
   }
 
-  function renderRelationshipCount(entity) {
-    // let object = Object.keys(entity).map((key) => {
-    //   if (key.startsWith("ref")) {
-    //     return (
-    //       <p key={key}>
-    //         <span>{`${key}: `}</span> {entity[key].value.length}
-    //       </p>
-    //     );
-    //   } else {
-    //     return;
-    //   }
-    // });
-    // object = object.filter((obj) => obj !== undefined);
-    // if (object.length > 0) {
-    //   return object;
-    // } else {
-    //   return (
-    //     <p>
-    //       <b>None</b>
-    //     </p>
-    //   );
-    // }
-  }
-
   // Ask for permission to delete the selected entity
   async function handleDeleteAnswer(entity) {
     const confirmed = window.confirm(
@@ -171,7 +147,7 @@ export default function List() {
       }
     }
 
-    const response = await api.delete(`/v2/entities/${delEntityId}`);
+    await api.delete(`/v2/entities/${delEntityId}`);
 
     let delEntities = [];
     if (delRelationshipsId.length > 0) {
@@ -189,6 +165,7 @@ export default function List() {
       }
     }
 
+    // delete the relationship of the related entities
     delEntities.map(async (relationship) => {
       try {
         let firstMethod = true;
@@ -233,6 +210,7 @@ export default function List() {
     history.push("/update");
   }
 
+  // List all the available entities in the database
   async function listAll() {
     setListingAll(true);
     const response = await api.get(
@@ -335,15 +313,15 @@ export default function List() {
             <p>
               <span>Total Attributes: </span> {Object.keys(entity).length - 2}
             </p>
-            <p className="show-relationship">
+            <div className="show-relationship">
               <span>Relationships </span>
-            </p>
-            {/* {renderRelationshipCount(entity)} */}
+            </div>
             {Object.keys(entity).map((key) => {
               if (key.startsWith("ref")) {
                 return (
                   <p key={key}>
-                    <span>{`${key}: `}</span> {entity[key].value.length}
+                    <span>{`${key}: `}</span>
+                    {entity[key].value.length}
                   </p>
                 );
               } else {

@@ -237,18 +237,3 @@ div span.attribute-title {
 .relationship-box {
   margin: 0px;
 }
-
-.show-relationship {
-  width: 100%;
-  margin-top: 5px;
-  background-color: #333;
-  color: #fff;
-  border-radius: 2px;
-  display: flex;
-  justify-content: center;
-}
-
-.show-relationship span {
-  display: flex;
-  padding: 7px;
-}
