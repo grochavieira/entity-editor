@@ -24,6 +24,7 @@ export default function List() {
   const [entitiesPerPage] = useState(20);
 
   const history = useHistory();
+  const [listingAll, setListingAll] = useState(false);
 
   // Reset the search and related variables
   function reset() {
@@ -35,6 +36,7 @@ export default function List() {
 
   // Search and return the specified entities from mongo DB
   async function handleSearch(search) {
+    setListingAll(false);
     if (search === "") {
       alert("Please, you need to write a type to search for it first!");
       reset();
@@ -83,10 +85,17 @@ export default function List() {
   async function changePage(pageNumber) {
     setCurrentPage(pageNumber);
     const offset = pageNumber * entitiesPerPage - entitiesPerPage;
-    const { data } = await api.get(
-      `/v2/entities?type=${lastSearch}&offset=${offset}&limit=${entitiesPerPage}`
-    );
-    setEntities(data);
+    if (listingAll) {
+      const { data } = await api.get(
+        `/v2/entities?offset=${offset}&limit=${entitiesPerPage}`
+      );
+      setEntities(data);
+    } else {
+      let { data } = await api.get(
+        `/v2/entities?type=${lastSearch}&offset=${offset}&limit=${entitiesPerPage}`
+      );
+      setEntities(data);
+    }
   }
 
   // Go back to the previous page in the pagination
@@ -116,15 +125,28 @@ export default function List() {
     }
   }
 
-  function countRelationship(entity) {
-    const keys = Object.keys(entity);
-    let count = 0;
-    for (let key of keys) {
-      if (key.startsWith("ref")) {
-        count++;
-      }
-    }
-    return count;
+  function renderRelationshipCount(entity) {
+    // let object = Object.keys(entity).map((key) => {
+    //   if (key.startsWith("ref")) {
+    //     return (
+    //       <p key={key}>
+    //         <span>{`${key}: `}</span> {entity[key].value.length}
+    //       </p>
+    //     );
+    //   } else {
+    //     return;
+    //   }
+    // });
+    // object = object.filter((obj) => obj !== undefined);
+    // if (object.length > 0) {
+    //   return object;
+    // } else {
+    //   return (
+    //     <p>
+    //       <b>None</b>
+    //     </p>
+    //   );
+    // }
   }
 
   // Ask for permission to delete the selected entity
@@ -154,24 +176,41 @@ export default function List() {
     let delEntities = [];
     if (delRelationshipsId.length > 0) {
       for (let index in delRelationshipsId) {
-        try {
-          const { data } = await api.get(
-            `/v2/entities/${delRelationshipsId[index]}`
-          );
-          delEntities.push(data);
-        } catch (err) {
-          console.log(err);
+        for (let subIndex in delRelationshipsId[index]) {
+          try {
+            const { data } = await api.get(
+              `/v2/entities/${delRelationshipsId[index][subIndex]}`
+            );
+            delEntities.push(data);
+          } catch (err) {
+            console.log(err);
+          }
         }
       }
     }
 
-    delEntities.map(async (entity) => {
+    delEntities.map(async (relationship) => {
       try {
-        await api.delete(
-          `/v2/entities/${entity.id}/attrs/ref${delEntityType}${
-            delEntityId.split(":")[3]
-          }`
+        let firstMethod = true;
+        const index = relationship[`ref${entity.type}`].value.indexOf(
+          entity.id
         );
+        if (relationship[`ref${entity.type}`].value.length > 1) {
+          relationship[`ref${entity.type}`].value.splice(index, 1);
+        } else {
+          firstMethod = false;
+          delete relationship[`ref${entity.type}`];
+        }
+
+        const id = relationship.id;
+        delete relationship.id;
+        delete relationship.type;
+
+        if (firstMethod) {
+          await api.put(`v2/entities/${id}/attrs`, relationship);
+        } else {
+          await api.delete(`/v2/entities/${id}/attrs/ref${delEntityType}`);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -179,13 +218,36 @@ export default function List() {
 
     if (entities.length === 1) {
       setEntities([]);
-    } else handleSearch(lastSearch);
+    } else {
+      if (listingAll) {
+        listAll();
+      } else {
+        handleSearch(lastSearch);
+      }
+    }
   }
 
   // Go forward to the update page
   function navigateUpdateScreen(entity) {
     localStorage.setItem("entityId", entity.id);
     history.push("/update");
+  }
+
+  async function listAll() {
+    setListingAll(true);
+    const response = await api.get(
+      `/v2/entities?offset=0&limit=${entitiesPerPage}&options=count`
+    );
+    const { data } = response;
+    setTotalEntities(response.headers["fiware-total-count"]);
+    if (data.length === 0) {
+      alert("The entity type specified doesn´t exist!");
+    } else {
+      setEntities(data);
+      setLastSearch("");
+      setCurrentPage(1);
+      setDoneSearch(true);
+    }
   }
 
   return (
@@ -218,6 +280,11 @@ export default function List() {
               className={`btn-type ${on.byType}`}
             >
               <span>Search by Type</span>
+            </button>
+          </div>
+          <div>
+            <button onClick={() => listAll()} className={`btn-all`}>
+              <span>List All Entities</span>
             </button>
           </div>
         </div>
@@ -265,28 +332,38 @@ export default function List() {
             <p>
               <span>Id:</span> {entity.id}
             </p>
-
             <p>
               <span>Total Attributes: </span> {Object.keys(entity).length - 2}
             </p>
-
-            <p>
-              <span>Total Relationships: </span> {countRelationship(entity)}
+            <p className="show-relationship">
+              <span>Relationships </span>
             </p>
+            {/* {renderRelationshipCount(entity)} */}
+            {Object.keys(entity).map((key) => {
+              if (key.startsWith("ref")) {
+                return (
+                  <p key={key}>
+                    <span>{`${key}: `}</span> {entity[key].value.length}
+                  </p>
+                );
+              } else {
+                return;
+              }
+            })}
 
             <div className="action-block">
               <button
                 className="update"
                 onClick={() => navigateUpdateScreen(entity)}
               >
-                <FiRefreshCcw size={20} color="#fff" /> <span>Atualizar</span>
+                <FiRefreshCcw size={20} color="#fff" /> <span>Update</span>
               </button>
 
               <button
                 className="delete"
                 onClick={() => handleDeleteAnswer(entity)}
               >
-                <FiTrash2 size={20} color="#fff" /> <span>Deletar</span>
+                <FiTrash2 size={20} color="#fff" /> <span>Delete</span>
               </button>
             </div>
           </div>

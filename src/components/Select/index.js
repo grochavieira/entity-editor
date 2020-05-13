@@ -7,29 +7,29 @@ const Select = ({ name, width, defaultValue, required, ...rest }) => {
   const { fieldName, registerField } = useField(name);
 
   const customSelectTypeStyles = {
-    control: base => ({
+    control: (base) => ({
       ...base,
       height: 25,
-      fontSize: 14,
+      fontSize: "1.4rem",
       minHeight: 35,
       width: width,
-      borderRadius: 2
+      borderRadius: 2,
     }),
-    menu: base => ({
+    menu: (base) => ({
       ...base,
       borderRadius: 2,
       hyphens: "auto",
       textAlign: "left",
       wordWrap: "break-word",
       backgroundColor: "#fff",
-      marginTop: 0
+      marginTop: 0,
     }),
-    menuList: base => ({
+    menuList: (base) => ({
       ...base,
       padding: 0,
       opacity: 1,
-      backgroundColor: "#fff"
-    })
+      backgroundColor: "#fff",
+    }),
   };
 
   useEffect(() => {
@@ -37,13 +37,13 @@ const Select = ({ name, width, defaultValue, required, ...rest }) => {
       name: fieldName,
       ref: selectRef.current,
       path: "state.value",
-      getValue: ref => {
+      getValue: (ref) => {
         if (rest.isMulti) {
           if (!ref.state.value) {
             return [];
           }
 
-          return ref.state.value.map(option => option.value);
+          return ref.state.value.map((option) => option.value);
         } else {
           if (!ref.state.value) {
             return "";
@@ -51,7 +51,7 @@ const Select = ({ name, width, defaultValue, required, ...rest }) => {
 
           return ref.state.value.value;
         }
-      }
+      },
     });
   }, [fieldName, registerField, rest.isMulti]);
 

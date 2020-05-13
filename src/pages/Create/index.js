@@ -15,16 +15,32 @@ import "./styles.css";
 export default function Create() {
   const [type, setType] = useState("SoilProbe");
   const [newAttribute, setNewAttribute] = useState("");
-  const [newRelationship, setNewRelationship] = useState("");
+  const [newRelationship, setNewRelationship] = useState({
+    value: "",
+    label: "Select...",
+  });
   const [entities, setEntities] = useState([]);
   const [numOfAttributes, setNumOfAttributes] = useState(0);
   const [attributes, setAttributes] = useState([]);
-  const [relationships, setRelationships] = useState([]);
+  const [relationships, setRelationships] = useState({
+    refSoilProbe: [],
+    refManagementZone: [],
+    refFarm: [],
+    refFarmer: [],
+  });
   const [selectedObject, setSelectedObject] = useState({
     value: "SoilProbe",
     acceptableEntities: [["ManagementZone", 1]],
     label: "SoilProbe",
   });
+  const [selectRelationshipItems, setSelectRelationshipItems] = useState([]);
+  const [unselectableAttributes, setUnselectableAttributes] = useState([
+    "",
+    "value",
+    "label",
+    "id",
+    "type",
+  ]);
 
   const selectBoxEntityTypeItems = [
     {
@@ -73,27 +89,73 @@ export default function Create() {
     setEntities(data);
   }
 
+  async function loadSelectedEntities(select) {
+    let { data } = await api.get("/v2/entities?limit=1000");
+
+    select.acceptableEntities.map((accept) => {
+      data = data.map((item) => {
+        if (
+          (accept[1] === 1 && item.type === `${accept[0]}`) ||
+          (accept[1] === -1 &&
+            !(`ref${select.value}` in item) &&
+            item.type === `${accept[0]}`)
+        ) {
+          const value = item.id;
+          const label = item.id.split("urn:ngsi-ld:")[1];
+          const object = {
+            value: value,
+            label: label,
+          };
+
+          return object;
+        }
+
+        return item;
+      });
+    });
+
+    data = data.filter((item) => item.hasOwnProperty("label"));
+
+    setSelectRelationshipItems(data);
+  }
+
   useEffect(() => {
     loadEntities();
   }, []);
+
+  useEffect(() => {
+    loadSelectedEntities(selectedObject);
+  }, [selectedObject]);
 
   // reset the form and related variables
   function reset() {
     setAttributes([]);
     setNewAttribute("");
     setNumOfAttributes(0);
-    setRelationships([]);
-    setNewRelationship("");
+    setRelationships({
+      refSoilProbe: [],
+      refManagementZone: [],
+      refFarm: [],
+      refFarmer: [],
+    });
+    setNewRelationship({
+      value: "",
+      label: "Select...",
+    });
     loadEntities();
+    loadSelectedEntities(selectedObject);
+    setUnselectableAttributes(["", "value", "label", "id", "type"]);
   }
 
   // create the entity and send it to the database
   async function handleSubmit(entity) {
-    const copyRelationships = relationships;
-    setRelationships([]);
+    const copyRelationships = { ...relationships };
     let error = false;
-    const { data } = await api.get(`/v2/entities?type=${type}&limit=100`);
+    const { data } = await api.get(`/v2/entities?type=${type}&limit=1000`);
     let newId;
+
+    console.log("=====entity=====");
+    console.log(entity);
 
     // generate an id for the new entity
     if (data.length !== 0) {
@@ -107,18 +169,24 @@ export default function Create() {
     entity.id = `urn:ngsi-ld:${type}:${newId}`;
 
     // update the related entities
-    if (copyRelationships.length !== 0) {
-      relationships.map(async (relationship) => {
-        relationship[`ref${type}${newId}`] = {
-          type: "Relationship",
-          value: entity.id,
-        };
+    Object.keys(copyRelationships).map((key) => {
+      copyRelationships[key].map(async (relationship) => {
+        if (`ref${type}` in relationship) {
+          relationship[`ref${type}`].value.push(entity.id);
+        } else {
+          relationship[`ref${type}`] = {
+            type: "Relationship",
+            value: [entity.id],
+          };
+        }
+
         const id = relationship.id;
         delete relationship.id;
         delete relationship.type;
+
         await api.put(`v2/entities/${id}/attrs`, relationship);
       });
-    }
+    });
 
     // send the new entity to ORION
     try {
@@ -136,16 +204,19 @@ export default function Create() {
 
   // create a temporary attribute for the entity
   const addNewAttribute = () => {
-    if (newAttribute !== "") {
+    if (unselectableAttributes.indexOf(newAttribute) === -1) {
       let sumOfAttributes = numOfAttributes + 1;
       setNumOfAttributes(sumOfAttributes);
       let object = {
         id: sumOfAttributes,
         name: newAttribute,
       };
+      setUnselectableAttributes([...unselectableAttributes, newAttribute]);
       setAttributes([...attributes, object]);
     } else {
-      alert("Please, type the attribute name to create a new attribute!");
+      alert(
+        "Please, type an available attribute name to create a new attribute!"
+      );
     }
     setNewAttribute("");
   };
@@ -156,90 +227,85 @@ export default function Create() {
       const newAttributes = attributes.filter(
         (attribute) => attribute.id !== id
       );
+
+      const removedAttribute = attributes.filter(
+        (attribute) => attribute.id === id
+      );
+
+      let index = unselectableAttributes.indexOf(removedAttribute[0].name);
+      unselectableAttributes.splice(index, 1);
+
+      setUnselectableAttributes(unselectableAttributes);
       setAttributes(newAttributes);
     }
   };
 
-  // checks whether the entity to be created can relate to the specified entity
-  function validateRelationship() {
-    if (newRelationship === "") {
-      alert("Please type a valid entity to create a new relationship!");
-      return false;
-    }
-
-    const { acceptableEntities } = selectedObject;
-    const str = newRelationship.split(":");
-    const entityType = str[0];
-    const entityId = str[1];
-
-    for (let i = 0; i < acceptableEntities.length; i++) {
-      const acceptableEntity = acceptableEntities[i];
-      if (entityType === acceptableEntity[0]) {
-        if (acceptableEntity[1] === -1) {
-          const sumOfEntities = entities.filter((entity) => {
-            if (
-              entity.type === type &&
-              `ref${entityType}${entityId}` in entity &&
-              entity[`ref${entityType}${entityId}`].value ===
-                `urn:ngsi-ld:${newRelationship}`
-            ) {
-              return entity;
-            }
-          });
-          if (sumOfEntities.length > 0) {
-            alert("The entity specified is already related to another entity");
-            return false;
-          }
-          return true;
-        } else {
-          const sumOfTypes = relationships.map(
-            (relationship) => relationship.type === entityType
-          );
-          if (sumOfTypes.length === 0) {
-            return true;
-          } else {
-            alert("you have already added the maximum limit for that entity");
-            return false;
+  // create a temporary relationship with the entity to be created
+  const addNewRelationship = () => {
+    if (newRelationship.value !== "") {
+      const entityType = newRelationship.label.split(":")[0];
+      const entitiesId = entities.map((entity) => entity.id);
+      const indexId = entitiesId.indexOf(newRelationship.value);
+      let canRelate = true;
+      for (let i = 0; i < selectedObject.acceptableEntities.length; i++) {
+        if (
+          selectedObject.acceptableEntities[i][1] === 1 &&
+          selectedObject.acceptableEntities[i][0] === entityType
+        ) {
+          if (
+            relationships[`ref${selectedObject.acceptableEntities[i][0]}`]
+              .length !== 0
+          ) {
+            canRelate = false;
           }
         }
       }
-    }
-    alert(
-      "Sorry, but this entity can´t create a relationship with the specified type!"
-    );
-    return false;
-  }
-
-  // create a temporary relationship with the entity to be created
-  const addNewRelationship = () => {
-    let canRelate = validateRelationship();
-    if (canRelate) {
-      const entitiesId = entities.map((entity) => entity.id);
-      const indexId = entitiesId.indexOf(`urn:ngsi-ld:${newRelationship}`);
-      if (indexId !== -1) {
-        let object = entities[indexId];
+      if (canRelate) {
+        let object = relationships;
+        object[`ref${entityType}`].push(entities[indexId]);
         const newEntities = entities.filter(
           (entity) => entity.id !== entities[indexId].id
         );
+        const newSelectableEntities = selectRelationshipItems.filter(
+          (item) => item.value !== newRelationship.value
+        );
+
         setEntities(newEntities);
-        setRelationships([...relationships, object]);
-        setNewRelationship("");
+        setRelationships(object);
+        setNewRelationship({
+          value: "",
+          label: "Select...",
+        });
+        setSelectRelationshipItems(newSelectableEntities);
       } else {
-        alert("The entity id specified does not exist!");
+        alert(
+          "You already added the maximum relationships for the specified entity!"
+        );
       }
+    } else {
+      alert(
+        "Please, you need to select an available entity to create a relationship!"
+      );
     }
   };
 
   // delete the entity temporary relationship
-  const deleteRelationship = (id) => {
-    const removedEntity = relationships.find(
+  const deleteRelationship = (id, type) => {
+    let object = relationships;
+    const removedEntity = object[type].find(
       (relationship) => relationship.id === id
     );
-    const newRelationships = relationships.filter(
+    object[type] = object[type].filter(
       (relationship) => relationship.id !== id
     );
-    setRelationships(newRelationships);
+    let newObject = {
+      value: removedEntity.id,
+      label: `${removedEntity.id.split("urn:ngsi-ld:")[1]}`,
+    };
+
+    setRelationships(object);
     setEntities([...entities, removedEntity]);
+    setSelectRelationshipItems([...selectRelationshipItems, newObject]);
   };
 
   // update the entity type to be created in the select box
@@ -255,7 +321,7 @@ export default function Create() {
       ...base,
       marginTop: 5,
       height: 25,
-      fontSize: 14,
+      fontSize: "1.4rem",
       minHeight: 35,
       borderRadius: 2,
     }),
@@ -387,21 +453,29 @@ export default function Create() {
             ))}
 
             <div className="attributes-header-block">
-              <Input
-                form=""
-                name="attributes"
-                field="new relationship"
-                type="text"
-                value={newRelationship}
-                onChange={(e) => setNewRelationship(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.which === 13) return addNewRelationship();
-                }}
-                required
-              />
+              <div className="select-relationship">
+                <label htmlFor="relatableEntities">new relationship</label>
+                <ReactSelect
+                  value={newRelationship}
+                  onChange={(e) => setNewRelationship(e)}
+                  className="select"
+                  name="relatableEntities"
+                  width={"100%"}
+                  options={selectRelationshipItems}
+                  theme={(theme) => ({
+                    ...theme,
+                    colors: {
+                      ...theme.colors,
+                      primary25: "#15b097",
+                      primary: "#333",
+                    },
+                  })}
+                  styles={customSelectObjectStyles}
+                />
+              </div>
 
               <button
-                className="btn-style btn-add"
+                className="btn-style btn-add btn-relate"
                 onClick={addNewRelationship}
                 type="button"
               >
@@ -409,54 +483,61 @@ export default function Create() {
               </button>
             </div>
 
-            {relationships.map((relationship) => (
-              <Scope
-                key={relationship.id}
-                path={`ref${relationship.type}${relationship.id.split(":")[3]}`}
-              >
-                <div className="attributes-container">
-                  <span className="attribute-title">{`ref${relationship.type}${
-                    relationship.id.split(":")[3]
-                  }`}</span>
-
-                  <div className="attributes-block relate">
-                    <div className="relationship-block">
-                      <span>value: </span>
-
-                      <div className="relationship-box">
-                        <div className="relationship-value">
-                          <Input
-                            name="type"
-                            value="Relationship"
-                            onChange={() => {}}
-                            invisible={true}
-                          />
-                          <Input
-                            name="value"
-                            value={relationship.id}
-                            onChange={() => {}}
-                            invisible={true}
-                          />
-                          <span>
-                            <b>Id:</b> {relationship.id}
-                          </span>
-                        </div>
-
-                        <button
-                          className="btn-trash relate"
-                          onClick={() => deleteRelationship(relationship.id)}
-                          type="button"
+            {Object.keys(relationships).map((key) => {
+              if (relationships[key].length === 0) {
+                return;
+              } else {
+                return (
+                  <Scope key={key} path={key}>
+                    <div className="attributes-container">
+                      <span className="attribute-title">{key}</span>
+                      <span className="value">value(s) </span>
+                      {relationships[key].map((relationship, index) => (
+                        <div
+                          key={relationship.id}
+                          className="attributes-block relate"
                         >
-                          <span>
-                            <FiTrash2 size={20} color="#333" />
-                          </span>
-                        </button>
-                      </div>
+                          <div className="relationship-block">
+                            <Input
+                              name="type"
+                              value="Relationship"
+                              onChange={() => {}}
+                              invisible={true}
+                            />
+
+                            <div className="relationship-box">
+                              <div className="relationship-value">
+                                <Input
+                                  name={`value[${index}]`}
+                                  value={relationship.id}
+                                  onChange={() => {}}
+                                  invisible={true}
+                                />
+                                <span>
+                                  <b>Id:</b> {relationship.id}
+                                </span>
+                              </div>
+
+                              <button
+                                className="btn-trash relate"
+                                onClick={() =>
+                                  deleteRelationship(relationship.id, key)
+                                }
+                                type="button"
+                              >
+                                <span>
+                                  <FiTrash2 size={20} color="#333" />
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </div>
-              </Scope>
-            ))}
+                  </Scope>
+                );
+              }
+            })}
 
             <div className="submit-block">
               <button className="btn-style btn-submit" type="submit">

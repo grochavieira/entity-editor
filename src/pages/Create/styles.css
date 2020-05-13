@@ -204,3 +204,51 @@ div span.attribute-title {
   margin-left: 5px;
   margin-right: 5px;
 }
+
+.select-relationship {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-relationship {
+  font-size: 1.4rem;
+  width: 100%;
+}
+
+.select-relationship label {
+  font-weight: bold;
+  font-size: 1.4rem;
+  text-align: left;
+  margin: 10px 0px;
+}
+
+.attributes-header-block .btn-relate {
+  margin-top: 35px;
+}
+
+.attributes-container .value {
+  display: flex;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0px 0px 5px;
+  font-size: 1.4rem;
+}
+
+.relationship-box {
+  margin: 0px;
+}
+
+.show-relationship {
+  width: 100%;
+  margin-top: 5px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+}
+
+.show-relationship span {
+  display: flex;
+  padding: 7px;
+}
