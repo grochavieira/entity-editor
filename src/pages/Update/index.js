@@ -194,6 +194,10 @@ export default function Update() {
       let object = {
         id: sumOfAttributes,
         name: newAttribute,
+        type: {
+          value: "Text",
+          label: "Text"
+        }
       };
       setUnselectableAttributes([...unselectableAttributes, newAttribute]);
       setAttributes([...attributes, object]);
@@ -302,6 +306,7 @@ export default function Update() {
   // Update the entity and the relationship attribute
   // of its related entities
   async function handleUpdate(updatedEntity) {
+    updatedEntity = convertValues(updatedEntity);
     const copyRelationships = { ...relationships };
     let error = false;
     let entitiesId = [];
@@ -359,6 +364,31 @@ export default function Update() {
     } else {
       alert("Entity updated successfully!");
     }
+  }
+
+  function convertValues(updatedEntity) {
+    console.log("Antes");
+    console.log(updatedEntity);
+    for (let key in updatedEntity) {
+      if (key !== "id" && key !== "type" && !key.startsWith("ref")) {
+        if (updatedEntity[key].type === "Number") {
+          const regex = /^[0-9\b]+.+[0-9\b]$/;
+
+          if (
+            updatedEntity[key].value === "" ||
+            regex.test(updatedEntity[key].value)
+          ) {
+            updatedEntity[key].value = parseFloat(updatedEntity[key].value);
+          } else {
+            updatedEntity[key].value = 0;
+          }
+        }
+      }
+    }
+    console.log("Depois");
+    console.log(updatedEntity);
+
+    return updatedEntity;
   }
 
   function searchDeletedRelationships(delRelationships) {

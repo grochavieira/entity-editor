@@ -149,6 +149,7 @@ export default function Create() {
 
   // create the entity and send it to the database
   async function handleSubmit(entity) {
+    entity = convertValues(entity);
     const copyRelationships = { ...relationships };
     let error = false;
     const { data } = await api.get(`/v2/entities?type=${type}&limit=1000`);
@@ -197,6 +198,24 @@ export default function Create() {
       alert("Entity created successfully!");
       reset();
     }
+  }
+
+  function convertValues(entity) {
+    for (let key in entity) {
+      if (key !== "id" && key !== "type" && !key.startsWith("ref")) {
+        if (entity[key].type === "Number") {
+          const regex = /^[0-9\b]+.+[0-9\b]$/;
+
+          if (entity[key].value === "" || regex.test(entity[key].value)) {
+            entity[key].value = parseFloat(entity[key].value);
+          } else {
+            entity[key].value = 0;
+          }
+        }
+      }
+    }
+
+    return entity;
   }
 
   // create a temporary attribute for the entity
