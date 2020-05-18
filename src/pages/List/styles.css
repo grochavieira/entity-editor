@@ -136,6 +136,10 @@
   background-color: #111;
 }
 
+.btn-id:focus {
+  opacity: 0.9;
+}
+
 .option-search-block .btn-type {
   flex: 1;
   background-color: #333;
@@ -152,6 +156,10 @@
   background-color: #222;
 }
 
+.btn-type:focus {
+  opacity: 0.9;
+}
+
 .explanation-block p {
   text-align: justify;
 }
@@ -160,8 +168,16 @@
   background-color: #111;
 }
 
+.btn-id.on:hover {
+  opacity: 0.5;
+}
+
 .btn-type.on {
   background-color: #111;
+}
+
+.btn-type.on:hover {
+  opacity: 0.5;
 }
 
 .option-search-block .btn-all {
@@ -178,6 +194,10 @@
 
 .btn-all:active {
   background-color: #12574b;
+}
+
+.btn-all:focus {
+  opacity: 0.9;
 }
 
 .list-container .relationship-block {
@@ -229,12 +249,20 @@
   background-color: rgb(28, 28, 156);
 }
 
+.action-block .update:focus {
+  background-color: rgb(15, 15, 85);
+}
+
 .action-block .delete {
   background-color: #ff3333;
 }
 
 .action-block .delete:hover {
   background-color: #8f1b1b;
+}
+
+.action-block .delete:focus {
+  background-color: #5f1313;
 }
 
 .show-total-count {
@@ -257,14 +285,17 @@
 .show-relationship {
   width: 100%;
   margin: 5px 0px;
-  background-color: #333;
-  color: #fff;
+  color: #333;
+  padding: 5px 0px;
+  border: 2px solid #333;
   border-radius: 2px;
-  display: flex;
-  justify-content: center;
+  padding: 5px;
+  background-color: #ccc;
 }
 
-.show-relationship span {
+.relationship-count {
   display: flex;
-  padding: 7px;
+  align-items: center;
+  padding-left: 10px;
+  margin: 10px 0px;
 }

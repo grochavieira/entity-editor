@@ -237,3 +237,8 @@ div span.attribute-title {
 .relationship-box {
   margin: 0px;
 }
+
+.select-relationship label {
+  font-size: 1.6rem;
+  margin-bottom: 0px;
+}

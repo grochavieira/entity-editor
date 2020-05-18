@@ -123,8 +123,6 @@ export default function Update() {
             label: data[property].type,
           },
         };
-        console.log("propriedades do data: ");
-        console.log(data[property]);
         unselectableAttributes.push(property);
         originalArray.push(object.name);
         attributesArray.push(object);
@@ -303,19 +301,16 @@ export default function Update() {
 
   // Update the entity and the relationship attribute
   // of its related entities
-  async function handleSubmit(updatedEntity) {
+  async function handleUpdate(updatedEntity) {
     const copyRelationships = { ...relationships };
     let error = false;
-
     let entitiesId = [];
+
     for (let property in entity) {
       if (property.startsWith("ref")) {
         entitiesId = [...entitiesId, ...entity[property].value];
       }
     }
-
-    console.log("EntitiesID: ");
-    console.log(entitiesId);
 
     let tempRelationships = [
       ...relationships["refSoilProbe"],
@@ -327,8 +322,6 @@ export default function Update() {
     tempRelationships = tempRelationships.map((item) => item.id);
 
     let delRelationships = entitiesId.map((entity) => {
-      console.log("relationships: ", tempRelationships);
-      console.log("entity.id: ", entity);
       if (!tempRelationships.includes(entity)) {
         return entity;
       } else {
@@ -338,77 +331,15 @@ export default function Update() {
 
     delRelationships = delRelationships.filter((item) => item !== 0);
 
-    console.log("Relacionamentos deletados: ");
-    console.log(delRelationships);
-
     let toBeDeleted = [];
-
-    console.log("entidades: ");
-    console.log(entities);
-
-    console.log("entidade a ser atualizada: ");
-    console.log(updatedEntity);
-
     let entityType = type;
+
     if (delRelationships.length > 0) {
-      for (let object of entities) {
-        if (delRelationships.includes(object.id)) {
-          toBeDeleted.push(object);
-        }
-      }
-      toBeDeleted.map(async (relationship) => {
-        try {
-          let firstMethod = true;
-          const index = relationship[`ref${entityType}`].value.indexOf(
-            entityId
-          );
-          if (relationship[`ref${entityType}`].value.length > 1) {
-            relationship[`ref${entityType}`].value.splice(index, 1);
-          } else {
-            firstMethod = false;
-            delete relationship[`ref${entityType}`];
-          }
-
-          const id = relationship.id;
-          const type = relationship.type;
-          delete relationship.id;
-          delete relationship.type;
-
-          if (firstMethod) {
-            console.log("*****************ENTROU AQUI Ó");
-            await api.put(`v2/entities/${id}/attrs`, relationship);
-          } else {
-            console.log("textinho");
-            console.log(`/v2/entities/${id}/attrs/ref${entityType}`);
-            await api.delete(`/v2/entities/${id}/attrs/ref${entityType}`);
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      });
+      toBeDeleted = searchDeletedRelationships(delRelationships);
+      await deletePreviousRelationships(toBeDeleted, entityType);
     }
 
-    console.log("relacionamentos a serem deletados: ");
-    console.log(toBeDeleted);
-
-    // update the related entities
-    Object.keys(copyRelationships).map((key) => {
-      copyRelationships[key].map(async (relationship) => {
-        if (`ref${type}` in relationship) {
-          relationship[`ref${type}`].value.push(entity.id);
-        } else {
-          relationship[`ref${type}`] = {
-            type: "Relationship",
-            value: [entity.id],
-          };
-        }
-        const id = relationship.id;
-        delete relationship.id;
-        delete relationship.type;
-
-        await api.put(`v2/entities/${id}/attrs`, relationship);
-      });
-    });
+    await updateRelatedEntities(copyRelationships);
 
     try {
       if (Object.keys(updatedEntity).length > 0) {
@@ -428,6 +359,64 @@ export default function Update() {
     } else {
       alert("Entity updated successfully!");
     }
+  }
+
+  function searchDeletedRelationships(delRelationships) {
+    let toBeDeleted = [];
+    for (let object of entities) {
+      if (delRelationships.includes(object.id)) {
+        toBeDeleted.push(object);
+      }
+    }
+    return toBeDeleted;
+  }
+
+  async function updateRelatedEntities(copyRelationships) {
+    Object.keys(copyRelationships).map((key) => {
+      copyRelationships[key].map(async (relationship) => {
+        if (`ref${type}` in relationship) {
+          relationship[`ref${type}`].value.push(entity.id);
+        } else {
+          relationship[`ref${type}`] = {
+            type: "Relationship",
+            value: [entity.id],
+          };
+        }
+        const id = relationship.id;
+        delete relationship.id;
+        delete relationship.type;
+
+        await api.put(`v2/entities/${id}/attrs`, relationship);
+      });
+    });
+  }
+
+  async function deletePreviousRelationships(toBeDeleted, entityType) {
+    toBeDeleted.map(async (relationship) => {
+      try {
+        let firstMethod = true;
+        const index = relationship[`ref${entityType}`].value.indexOf(entityId);
+        if (relationship[`ref${entityType}`].value.length > 1) {
+          relationship[`ref${entityType}`].value.splice(index, 1);
+        } else {
+          firstMethod = false;
+          delete relationship[`ref${entityType}`];
+        }
+
+        const id = relationship.id;
+        const type = relationship.type;
+        delete relationship.id;
+        delete relationship.type;
+
+        if (firstMethod) {
+          await api.put(`v2/entities/${id}/attrs`, relationship);
+        } else {
+          await api.delete(`/v2/entities/${id}/attrs/ref${entityType}`);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    });
   }
 
   // style for the entity type select box
@@ -462,7 +451,7 @@ export default function Update() {
           <p>Update Entity Form</p>
         </div>
         <div className="update-form-block">
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleUpdate}>
             <div className="property-block">
               <p>
                 <b>id: </b>

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import SearchIcon from "@material-ui/icons/Search";
-import { FiRefreshCcw, FiTrash2 } from "react-icons/fi";
+import { FiRefreshCcw, FiTrash2, FiArrowRight } from "react-icons/fi";
 import { useHistory } from "react-router-dom";
 
 import Header from "../../components/Header";
@@ -12,6 +12,9 @@ import "./styles.css";
 
 export default function List() {
   const [doneSearch, setDoneSearch] = useState(false);
+  const [placeholderText, setPlaceholderText] = useState(
+    "Ex: SoilProbe:1 or ManagementZone:20"
+  );
   const [entities, setEntities] = useState([]);
   const [totalEntities, setTotalEntities] = useState(0);
   const [searchText, setSearchText] = useState("");
@@ -120,8 +123,10 @@ export default function List() {
   function changeSearch(search) {
     if (search === "id") {
       setOn({ byId: "on", byType: "" });
+      setPlaceholderText("Ex: SoilProbe:1 or ManagementZone:20");
     } else {
       setOn({ byId: "", byType: "on" });
+      setPlaceholderText("Ex: SoilProbe or ManagementZone");
     }
   }
 
@@ -151,18 +156,7 @@ export default function List() {
 
     let delEntities = [];
     if (delRelationshipsId.length > 0) {
-      for (let index in delRelationshipsId) {
-        for (let subIndex in delRelationshipsId[index]) {
-          try {
-            const { data } = await api.get(
-              `/v2/entities/${delRelationshipsId[index][subIndex]}`
-            );
-            delEntities.push(data);
-          } catch (err) {
-            console.log(err);
-          }
-        }
-      }
+      delEntities = await searchDeletedRelationships(delRelationshipsId);
     }
 
     // delete the relationship of the related entities
@@ -204,6 +198,23 @@ export default function List() {
     }
   }
 
+  async function searchDeletedRelationships(delRelationshipsId) {
+    let delEntities = [];
+    for (let index in delRelationshipsId) {
+      for (let subIndex in delRelationshipsId[index]) {
+        try {
+          const { data } = await api.get(
+            `/v2/entities/${delRelationshipsId[index][subIndex]}`
+          );
+          delEntities.push(data);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+    return delEntities;
+  }
+
   // Go forward to the update page
   function navigateUpdateScreen(entity) {
     localStorage.setItem("entityId", entity.id);
@@ -219,7 +230,7 @@ export default function List() {
     const { data } = response;
     setTotalEntities(response.headers["fiware-total-count"]);
     if (data.length === 0) {
-      alert("The entity type specified doesn´t exist!");
+      alert("Sorry, but there are no entities created in the database!");
     } else {
       setEntities(data);
       setLastSearch("");
@@ -284,7 +295,7 @@ export default function List() {
                   return handleSearch(searchText);
                 }
               }}
-              placeholder="Search here for created entities..."
+              placeholder={placeholderText}
               type="text"
             />
           </div>
@@ -307,27 +318,40 @@ export default function List() {
       <div className="list-container">
         {entities.map((entity) => (
           <div key={entity.id} className="entity-block">
-            <p>
+            <p className="list-attribute">
               <span>Id:</span> {entity.id}
             </p>
-            <p>
+            <p className="list-attribute">
               <span>Total Attributes: </span> {Object.keys(entity).length - 2}
             </p>
-            <div className="show-relationship">
-              <span>Relationships </span>
-            </div>
-            {Object.keys(entity).map((key) => {
-              if (key.startsWith("ref")) {
-                return (
-                  <p key={key}>
-                    <span>{`${key}: `}</span>
-                    {entity[key].value.length}
-                  </p>
-                );
-              } else {
-                return;
-              }
-            })}
+
+            {Object.keys(entity).includes("refSoilProbe") ||
+            Object.keys(entity).includes("refManagementZone") ||
+            Object.keys(entity).includes("refFarm") ||
+            Object.keys(entity).includes("refFarmer") ? (
+              <div className="show-relationship">
+                <span>Relationships: </span>
+                {Object.keys(entity).map((key) => {
+                  if (key.startsWith("ref")) {
+                    return (
+                      <p className="relationship-count" key={key}>
+                        <FiArrowRight color="#333" size={16} />
+                        <span>{`${key}: `}</span>
+                        {entity[key].value.length}
+                      </p>
+                    );
+                  } else {
+                    return;
+                  }
+                })}
+              </div>
+            ) : (
+              <div className="show-relationship">
+                <p>
+                  <b>This entity has no relationships.</b>
+                </p>
+              </div>
+            )}
 
             <div className="action-block">
               <button
