@@ -1,0 +1,110 @@
+version: "3"
+
+services:
+  orion:
+    image: fiware/orion:${ORION_VERSION:-1.15.1}
+    ports:
+      - "1026:1026"
+    command: -corsOrigin __ALL -logLevel DEBUG -noCache -dbhost mongo
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:1026/version"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  mongo:
+    image: mongo:3.2
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  quantumleap:
+    image: ${QL_IMAGE:-smartsdk/quantumleap}
+    ports:
+      - "8668:8668"
+    depends_on:
+      - mongo
+      - orion
+      - crate
+    environment:
+      - CRATE_HOST=${CRATE_HOST:-crate}
+      - USE_GEOCODING=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  crate:
+    image: crate:${CRATE_VERSION:-3.0.5}
+    command: crate -Clicense.enterprise=false -Cauth.host_based.enabled=false
+      -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+    volumes:
+      - cratedata:/data
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=crate-datasource,grafana-clock-panel,grafana-worldmap-panel
+    depends_on:
+      - crate
+
+  redis:
+    image: redis
+    deploy:
+      # Scaling Redis requires some extra work.
+      # See https://get-reddie.com/blog/redis4-cluster-docker-compose/
+      replicas: 1
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  iot_agent:
+    image: fiware/iotagent-json
+    hostname: iotAgentJson
+    depends_on:
+      - mongo
+    expose:
+      - "4041"
+      - "7896"
+    ports:
+      - "4041:4041"
+      - "7896:7896"
+    environment:
+      - "IOTA_CB_HOST=orion"
+      - "IOTA_CB_PORT=1026"
+      - "IOTA_NORTH_PORT=4041"
+      - "IOTA_REGISTRY_TYPE=mongodb"
+      - "IOTA_MONGO_HOST=mongo"
+      - "IOTA_MONGO_PORT=27017"
+      - "IOTA_MONGO_DB=iotagent-json"
+      - "IOTA_HTTP_PORT=7896"
+      - "IOTA_PROVIDER_URL=http://iot-agent:4041"
+
+  ngsi-ld_wrapper:
+    image: fiware/ngsi-ld_wrapper
+    container_name: ngsildWrapper
+    ports:
+      - "1030:1030"
+    links:
+      - orion
+    environment:
+      - NGSI_Endpoint=http://orion:1026
+
+volumes:
+  mongodata:
+  cratedata:
+  redisdata:
+
+networks:
+  default:
+    driver_opts:
+      com.docker.network.driver.mtu: ${DOCKER_MTU:-1400}
