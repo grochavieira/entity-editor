@@ -1,0 +1,3 @@
+[submodule "iotagent_json"]
+	path = iotagent_json
+	url = https://github.com/telefonicaid/iotagent-json

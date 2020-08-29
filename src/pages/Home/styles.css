@@ -1,0 +1,39 @@
+.home-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+.home-container .overview {
+  width: 90%;
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin: 10px;
+  border-radius: 2px;
+}
+
+.home-container .overview .title {
+  background-color: #333;
+  text-align: center;
+  padding: 5px;
+  font-family: Kaushan Script;
+  color: #fff;
+  font-size: 3rem;
+  border-radius: 2px;
+}
+
+.home-container .overview p {
+  text-align: justify;
+  line-height: 2.3rem;
+}
+
+.home-container .overview .sub-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  margin: 10px 0px;
+  letter-spacing: 0.1em;
+  font-size: 1.5rem;
+}

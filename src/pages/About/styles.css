@@ -1,0 +1,115 @@
+@import url("https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap");
+
+.about-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+.about-container .version-block {
+  margin: 10px 0px;
+  width: 90%;
+  max-width: 600px;
+}
+
+.about-container .company-container {
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin: 20px;
+  border-radius: 2px;
+  box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  font-family: Kaushan Script;
+  font-size: 3rem;
+  font-weight: 100;
+  padding: 5px 20px 5px 20px;
+  border-radius: 2px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+}
+
+.about-container .version-block .header {
+  max-width: 600px;
+}
+
+.content {
+  margin: 20px;
+  text-align: justify;
+  font-size: 1.6rem;
+  line-height: 2.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.content .title {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 1.5rem;
+  margin: 10px 0px;
+}
+
+.about-container .developers-container {
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0px 0px 20px 0px;
+  margin: 20px;
+  border-radius: 2px;
+  box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.2);
+}
+
+.about-container .developers-container .profiles-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.profile {
+  width: 40%;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile img {
+  border-radius: 50%;
+  width: 90%;
+  box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.5);
+}
+
+.profile span {
+  margin: 10px 0px;
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+}
+
+.github-link {
+  align-self: center;
+  margin: 20px 0px 0px 0px;
+  padding: 10px 15px;
+  border-radius: 2px;
+  background-color: rgb(66, 65, 65);
+  box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.5);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.5s;
+}
+
+.github-link:hover {
+  background-color: rgb(29, 27, 27);
+}
