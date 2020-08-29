@@ -16,7 +16,7 @@
  
 </p>
 <h1 align="center">
-    Entity Editor
+    <img src="assets/logo.png">
 </h1>
 
 <h4 align="center"> 
@@ -46,43 +46,63 @@ Projeto de Engenharia de Software - Site para criar e editar entidades em format
 
 ## ⚙️ Funcionalidades
 
-- [x] Posts podem ser adicionados na plataforma web enviando:
+- [x] - [x]
+  - [x]
+  - [x]
 
-  - [x] nome de usuário
-  - [x] conteúdo do post
-  - [x] imagem (opcional)
-
-- [x] Comentários podem ser adicionados na plataforma web enviando:
-
-  - [x] nome de usuário
-  - [x] conteúdo do comentário
+- [x] - [x]
+  - [x]
 
 ---
 
 ## 🎨 Layout
 
-### Criação de posts:
+### Página Home:
 
 <p align="center">
-    <img src="assets/create_post.gif">
+    <img src="assets/home_page_demonstration.gif">
 </p>
 
-### Adição de comentários aos posts:
+### Página Create (Entities):
 
 <p align="center">
-    <img src="assets/create_comment.gif">
+    <img src="assets/create_page_demonstration.gif">
 </p>
 
-### Demonstração de pesquisa por ID:
+### Demonstração de Relacionamento entre Entidades:
+
+<p align="center">
+    <img src="assets/relationship_demonstration.gif">
+</p>
+
+### Demonstração de Paginação:
+
+<p align="center">
+    <img src="assets/pagination_demonstration.gif">
+</p>
+
+### Demonstração de Pesquisa por ID e Tipo da Entidade:
 
 <p align="center">
     <img src="assets/search_demonstration.gif">
 </p>
 
-### Demonstração da paginação:
+### Demonstração de Atualização de Entidades:
 
 <p align="center">
-    <img src="assets/pagination_demonstration.gif">
+    <img src="assets/update_demonstration.gif">
+</p>
+
+### Demonstração de Exclusão de Entidades:
+
+<p align="center">
+    <img src="assets/delete_demonstration.gif">
+</p>
+
+### Página About:
+
+<p align="center">
+    <img src="assets/about_page_demonstration.gif">
 </p>
 
 ---
