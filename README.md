@@ -1,10 +1,10 @@
 <p align="center">
-  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/grochavieira/SimpleSocialMediaApp?color=%2304D361&style=for-the-badge">
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/grochavieira/EntityEditor?color=%2304D361&style=for-the-badge">
 
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/grochavieira/SimpleSocialMediaApp?style=for-the-badge">
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/grochavieira/EntityEditor?style=for-the-badge">
   
-  <a href="https://github.com/grochavieira/SimpleSocialMediaApp/commits/master">
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/grochavieira/SimpleSocialMediaApp?style=for-the-badge">
+  <a href="https://github.com/grochavieira/EntityEditor/commits/master">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/grochavieira/EntityEditor?style=for-the-badge">
   </a>
     
    <img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge">
@@ -46,12 +46,31 @@ Projeto de Engenharia de Software - Site para criar e editar entidades em format
 
 ## ⚙️ Funcionalidades
 
-- [x] - [x]
-  - [x]
-  - [x]
+- [x] Página Home com um breve resumo do propósito da aplicação.
 
-- [x] - [x]
-  - [x]
+- [x] Entidades podem ser criadas:
+
+  - [x] Com os tipos disponíveis (SoilProbe, ManagementZone, Farm e Farmer);
+  - [x] Adicionando novos atributos, sem serem repetidos, dos tipos Text e Number;
+  - [x] Adicionando novos relacionamentos (se estiverem disponíveis);
+  - [x] Sem a adição das opções anteriores.
+
+- [x] Entidades podem ser listadas:
+
+  - [x] Por meio de uma pesquisa por ID;
+  - [x] Por meio de uma pesquisa por Tipo;
+  - [x] Totalmente.
+
+- [x] Entidades podem ser deletadas.
+
+- [x] Entidades podem ser atualizadas:
+
+  - [x] Adicionando Atributos;
+  - [x] Deletando Atributos;
+  - [x] Adicionando Relacionamentos;
+  - [x] Deletando Relacionamentos.
+
+- [x] Pagína About com mais informações sobre os desenvolvedores.
 
 ---
 
@@ -111,7 +130,7 @@ Projeto de Engenharia de Software - Site para criar e editar entidades em format
 
 Este projeto é divido em duas partes:
 
-1. Backend (pasta server)
+1. Backend (pasta docker)
 2. Frontend (pasta web)
 
 💡O Frontend precisa que o Backend esteja sendo executado para funcionar.
@@ -119,7 +138,7 @@ Este projeto é divido em duas partes:
 ### Pré-requisitos
 
 Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
-[Git](https://git-scm.com), [Node.js](https://nodejs.org/en/), [Yarn](https://classic.yarnpkg.com/en/docs/install).
+[Git](https://git-scm.com), [Node.js](https://nodejs.org/en/), [Yarn](https://classic.yarnpkg.com/en/docs/install) e [Docker](https://www.docker.com/).
 Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
 
 #### 🎲 Rodando o Backend (servidor)
@@ -127,24 +146,18 @@ Além disto é bom ter um editor para trabalhar com o código como [VSCode](http
 ```bash
 
 # Clone este repositório
-$ git clone https://github.com/grochavieira/SimpleSocialMediaApp.git
+$ git clone https://github.com/grochavieira/EntityEditor.git
 
 # Acesse a pasta do projeto no terminal/cmd
-$ cd SimpleSocialMediaApp
+$ cd EntityEditor
 
-# Vá para a pasta server
-$ cd server
+# Vá para a pasta docker
+$ cd docker
 
-# Instale as dependências com npm
-$ npm install
+# Execute a docker (lembrando que o docker precisa ser inicializado primeiro)
+$ docker-compose -f docker-compose-dev.yml up -d
 
-# Crie o banco de dados do sistema
-$ npm run knex:migrate
-
-# Execute a aplicação
-$ npm run start
-
-# O servidor inciará na porta:3333 - acesse http://localhost:3333
+# O docker utilizara a porta 1026 - acesse http://localhost:1026/v2/entities
 
 ```
 
@@ -153,10 +166,10 @@ $ npm run start
 ```bash
 
 # Clone este repositório
-$ git clone https://github.com/grochavieira/SimpleSocialMediaApp.git
+$ git clone https://github.com/grochavieira/EntityEditor.git
 
 # Acesse a pasta do projeto no seu terminal/cmd
-$ cd SimpleSocialMediaApp
+$ cd EntityEditor
 
 # Vá para a pasta da aplicação Front End
 $ cd web
@@ -177,32 +190,22 @@ $ yarn start
 
 As seguintes ferramentas foram usadas na construção do projeto:
 
-#### **Website** ([React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/))
+#### **Website** ([React](https://reactjs.org/))
 
 - **[React Router Dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom)**
 - **[React Icons](https://react-icons.github.io/react-icons/)**
 - **[Axios](https://github.com/axios/axios)**
-- **[React Dropzone](https://github.com/react-dropzone/react-dropzone)**
+- **[Unform](https://github.com/Rocketseat/unform)**
+- **[React Select](https://react-select.com/home)**
 
-> Veja o arquivo [package.json](https://github.com/grochavieira/SimpleSocialMediaApp/blob/master/web/package.json)
-
-#### **Server** ([NodeJS](https://nodejs.org/en/) + [TypeScript](https://www.typescriptlang.org/))
-
-- **[Express](https://expressjs.com/)**
-- **[CORS](https://expressjs.com/en/resources/middleware/cors.html)**
-- **[KnexJS](http://knexjs.org/)**
-- **[SQLite](https://github.com/mapbox/node-sqlite3)**
-- **[ts-node](https://github.com/TypeStrong/ts-node)**
-- **[Multer](https://github.com/expressjs/multer)**
-
-> Veja o arquivo [package.json](https://github.com/grochavieira/SimpleSocialMediaApp/blob/master/server/package.json)
+> Veja o arquivo [package.json](https://github.com/grochavieira/EntityEditor/blob/master/web/package.json)
 
 #### **Utilitários**
 
 - Editor: **[Visual Studio Code](https://code.visualstudio.com/)** → Extensions: **[SQLite](https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite)**
 - Teste de API: **[Insomnia](https://insomnia.rest/)**
 - Ícones: **[Feather Icons](https://feathericons.com/)**, **[Font Awesome](https://fontawesome.com/)**, **[Ionicons](https://ionicons.com/)**
-- Fontes: **[Raleway](https://fonts.google.com/specimen/Raleway)**
+- Fontes: **[Roboto](https://fonts.google.com/specimen/Roboto)**, **[Kaushan Script](https://fonts.google.com/specimen/Kaushan+Script)**
 
 ---
 

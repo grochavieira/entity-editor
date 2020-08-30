@@ -5,7 +5,6 @@ import "./styles.css";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
-import guilherme from "../../img/guilherme.jfif";
 import thomas from "../../img/thomas.jfif";
 
 export default function About() {
