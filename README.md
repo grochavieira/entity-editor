@@ -49,6 +49,7 @@ Recebemos a proposta de desenvolver um site para a criação e edição de entid
 <p align="justify">
     Portanto, nosso trabalho foi desenvolver uma aplicação que seja capaz de fornecer as mesmas ferramentas que o Postman, porém de uma forma simplificada e amigável ao usuário, que automaticamente implemente os padrões utilizados no projeto SWAMP, além de facilitar o processo de edição, criação ou exclusão das entidades, e, principalmente, prover um fácil relacionamento entre elas, seguindo as regras estabelecidas pelos clientes.
 </p>
+
 ---
 
 <a name="-funcionalidades"></a>
