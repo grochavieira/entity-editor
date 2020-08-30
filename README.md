@@ -212,6 +212,8 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 #### **Utilitários**
 
+- Aplicação docker utilizada: **[IIoT-Fei](https://github.com/IIoT-Fei/SWAMP-PLATFORM-SERVICES)**
+- API utilizada: **[FIWARE-ORION](https://fiware-orion.readthedocs.io/en/2.1.0/user/walkthrough_apiv2/index.html)**
 - Editor: **[Visual Studio Code](https://code.visualstudio.com/)**
 - Teste de API: **[Insomnia](https://insomnia.rest/)**
 - Ícones: **[Feather Icons](https://feathericons.com/)**
