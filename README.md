@@ -52,7 +52,7 @@ Recebemos a proposta de desenvolver um site para a criação e edição de entid
 
 Abaixo temos um link para um vídeo com uma demonstração do site:
 
-<a align="center" href="https://www.youtube.com/watch?v=qcT7X7OjZ0k&t=54s">
+<a align="center" href="https://youtu.be/qcT7X7OjZ0k">
     <img alt="Vídeo do Site" src="https://img.shields.io/static/v1?label=Demonstra%C3%A7%C3%A3o&message=Entity-Editor&color=C4302B&style=for-the-badge&logo=youtube">
 </a>
 
