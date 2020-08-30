@@ -39,15 +39,15 @@
 ## 💻 Sobre o projeto
 
 <p align="justify">
-Recebemos a proposta de desenvolver um site para a criação e edição de entidades virtuais, nomeado \textit{Entity Editor}, que será utilizado pelos integrantes do SWAMP (projeto de irrigação inteligente para diminuir o consumo de água na agricultura), pois eles precisam virtualizar as fazendas, assim como os equipamentos e conceitos subjetivos que fazem parte delas, para que essas entidades possam ser armazenadas dentro de um banco de dados e, posteriormente, possam ser manipuladas pelas aplicações que eles desenvolveram.
+Recebemos a proposta de desenvolver um site para a criação e edição de entidades virtuais, nomeado Entity Editor, que será utilizado pelos integrantes do SWAMP (projeto de irrigação inteligente para diminuir o consumo de água na agricultura), pois eles precisam virtualizar as fazendas, assim como os equipamentos e conceitos subjetivos que fazem parte delas, para que essas entidades possam ser armazenadas dentro de um banco de dados e, posteriormente, possam ser manipuladas pelas aplicações que eles desenvolveram.
 </p>
 
 <p align="justify">
-    Atualmente, os nossos clientes utilizam o \textit{Postman}, que é uma ferramenta bastante utilizada para testar APIs WEB com o envio de requisições HTTP, para a criação de entidades, no entanto, existe uma grande dificuldade durante esse processo de gerar uma nova entidade, pois eles precisam escrever todas as características da entidade seguindo um determinado padrão estabelecido no SWAMP, além de precisar redigir todo o texto no formato \textit{JSON}(Notação de Objetos em Javascript ou \textit{Javascript Object Notation}, em inglês), se tornando uma atividade bastante maçante, principalmente na criação de múltiplas entidades, ou então no relacionamento entre elas, que é um dos conceitos mais importantes nesse exercício de virtualização.
+    Atualmente, os nossos clientes utilizam o Postman, que é uma ferramenta bastante utilizada para testar APIs WEB com o envio de requisições HTTP, para a criação de entidades, no entanto, existe uma grande dificuldade durante esse processo de gerar uma nova entidade, pois eles precisam escrever todas as características da entidade seguindo um determinado padrão estabelecido no SWAMP, além de precisar redigir todo o texto no formato JSON(Notação de Objetos em Javascript ou Javascript Object Notation}, em inglês), se tornando uma atividade bastante maçante, principalmente na criação de múltiplas entidades, ou então no relacionamento entre elas, que é um dos conceitos mais importantes nesse exercício de virtualização.
 </p>
 
 <p align="justify">
-    Portanto, nosso trabalho é desenvolver uma aplicação que seja capaz de fornecer as mesmas ferramentas que o \textit{Postman}, porém de uma forma simplificada e amigável ao usuário, que automaticamente implemente os padrões utilizados no projeto SWAMP, além de facilitar o processo de edição, criação ou exclusão das entidades, e, principalmente, prover um fácil relacionamento entre elas, seguindo as regras estabelecidas pelos clientes.
+    Portanto, nosso trabalho foi desenvolver uma aplicação que seja capaz de fornecer as mesmas ferramentas que o Postman, porém de uma forma simplificada e amigável ao usuário, que automaticamente implemente os padrões utilizados no projeto SWAMP, além de facilitar o processo de edição, criação ou exclusão das entidades, e, principalmente, prover um fácil relacionamento entre elas, seguindo as regras estabelecidas pelos clientes.
 </p>
 ---
 
