@@ -194,9 +194,9 @@ $ yarn start
 
 ```
 
-#### Site Hospedado
+#### 🌐 Site Hospedado
 
-Caso queira, não precisa rodar aplicação web do terminal, basta acessar o link abaixo do site hospedado e rodar o docker no seu computador.
+Caso queira, não precisa rodar a aplicação web do terminal, basta acessar o link abaixo do site hospedado e rodar o docker no seu computador.
 
 <a align="center" href="https://entity-editor.netlify.app/">
     <img alt="Site Hospedado" src="https://img.shields.io/static/v1?label=Site&message=Entity-Editor&color=3DA9BC&style=for-the-badge&logo=netlify">
