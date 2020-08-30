@@ -202,9 +202,9 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 #### **Utilitários**
 
-- Editor: **[Visual Studio Code](https://code.visualstudio.com/)** → Extensions: **[SQLite](https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite)**
+- Editor: **[Visual Studio Code](https://code.visualstudio.com/)**
 - Teste de API: **[Insomnia](https://insomnia.rest/)**
-- Ícones: **[Feather Icons](https://feathericons.com/)**, **[Font Awesome](https://fontawesome.com/)**, **[Ionicons](https://ionicons.com/)**
+- Ícones: **[Feather Icons](https://feathericons.com/)**
 - Fontes: **[Roboto](https://fonts.google.com/specimen/Roboto)**, **[Kaushan Script](https://fonts.google.com/specimen/Kaushan+Script)**
 
 ---
