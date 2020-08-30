@@ -50,6 +50,12 @@ Recebemos a proposta de desenvolver um site para a criação e edição de entid
     Portanto, nosso trabalho foi desenvolver uma aplicação que seja capaz de fornecer as mesmas ferramentas que o Postman, porém de uma forma simplificada e amigável ao usuário, que automaticamente implemente os padrões utilizados no projeto SWAMP, além de facilitar o processo de edição, criação ou exclusão das entidades, e, principalmente, prover um fácil relacionamento entre elas, seguindo as regras estabelecidas pelos clientes.
 </p>
 
+Abaixo temos um link para um vídeo com uma demonstração do site:
+
+<a align="center" href="https://www.youtube.com/watch?v=qcT7X7OjZ0k&t=54s">
+    <img alt="Vídeo do Site" src="https://img.shields.io/static/v1?label=Demonstra%C3%A7%C3%A3o&message=Entity-Editor&color=C4302B&style=for-the-badge&logo=youtube">
+</a>
+
 ---
 
 <a name="-funcionalidades"></a>
