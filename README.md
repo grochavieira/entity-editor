@@ -151,7 +151,7 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/), [Yarn](https://classic.yarnpkg.com/en/docs/install) e [Docker](https://www.docker.com/).
 Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
 
-#### 🎲 Rodando o Backend (servidor)
+#### 🎲 Rodando o Backend (docker)
 
 ```bash
 
@@ -193,6 +193,14 @@ $ yarn start
 # A aplicação será aberta na porta:3000 - acesse http://localhost:3000
 
 ```
+
+#### Site Hospedado
+
+Caso queira, não precisa rodar aplicação web do terminal, basta acessar o link abaixo do site hospedado e rodar o docker no seu computador.
+
+<a align="center" href="https://entity-editor.netlify.app/">
+    <img alt="Site Hospedado" src="https://img.shields.io/static/v1?label=Site&message=Entity-Editor&color=3DA9BC&style=for-the-badge&logo=netlify">
+</a>
 
 ---
 
