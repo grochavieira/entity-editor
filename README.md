@@ -140,6 +140,12 @@ Abaixo temos um link para um vídeo com uma demonstração do site:
     <img src="assets/about_page_demonstration.gif">
 </p>
 
+### Demonstração para dispositivos mobile:
+
+<p align="center">
+    <img src="assets/mobile_demonstration.gif">
+</p>
+
 ---
 
 ## 🚀 Como executar o projeto
