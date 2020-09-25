@@ -37,7 +37,8 @@ services:
 
   crate:
     image: crate:${CRATE_VERSION:-3.0.5}
-    command: crate -Clicense.enterprise=false -Cauth.host_based.enabled=false
+    command:
+      -corsOrigin __ALL  crate -Clicense.enterprise=false -Cauth.host_based.enabled=false
       -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
     ports:
       # Admin UI
