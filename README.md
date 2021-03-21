@@ -49,7 +49,7 @@ Recebemos a proposta de desenvolver um site para a criação e edição de entid
 Abaixo temos um link para um vídeo com uma demonstração do site:
 
 <a align="center" href="https://youtu.be/qcT7X7OjZ0k">
-    <img alt="Vídeo do Site" src="https://img.shields.io/static/v1?label=Demonstra%C3%A7%C3%A3o&message=Entity-Editor&color=C4302B&style=for-the-badge&logo=youtube">
+    <img alt="Vídeo do Site" src="https://img.shields.io/static/v1?label=Demonstra%C3%A7%C3%A3o&message=Entity-Editor&color=C4302B&flat&logo=youtube">
 </a>
 
 ---
@@ -207,7 +207,7 @@ $ yarn start
 Caso queira, não precisa rodar a aplicação web do terminal, basta acessar o link abaixo do site hospedado e rodar o docker no seu computador.
 
 <a align="center" href="https://entity-editor.netlify.app/">
-    <img alt="Site Hospedado" src="https://img.shields.io/static/v1?label=Site&message=Entity-Editor&color=3DA9BC&style=for-the-badge&logo=netlify">
+    <img alt="Site Hospedado" src="https://img.shields.io/static/v1?label=Site&message=Entity-Editor&color=3DA9BC&flat&logo=netlify">
 </a>
 
 ---
